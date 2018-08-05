@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="Dr&#39;s Note">
 <meta property="og:description" content="因为换电脑的原因，自己把博客的源代码给丢失了，因此好久没有再写文章，今天终于把博客重新部署使用起来了（幸亏文章比较少）。以后会慢慢的在上面会继续写一些文章。本文特记录一下自己博客的一些配置，以防自己再次出现这种情况时重新配置。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-05T06:55:32.258Z">
+<meta property="og:updated_time" content="2018-08-05T06:56:24.446Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="博客历史小记">
 <meta name="twitter:description" content="因为换电脑的原因，自己把博客的源代码给丢失了，因此好久没有再写文章，今天终于把博客重新部署使用起来了（幸亏文章比较少）。以后会慢慢的在上面会继续写一些文章。本文特记录一下自己博客的一些配置，以防自己再次出现这种情况时重新配置。">
@@ -351,7 +351,7 @@
                 
               
 
-              <time title="创建时间：2018-08-05 14:04:09 / 修改时间：14:55:32" itemprop="dateCreated datePublished" datetime="2018-08-05T14:04:09+08:00">2018-08-05</time>
+              <time title="创建时间：2018-08-05 14:04:09 / 修改时间：14:56:24" itemprop="dateCreated datePublished" datetime="2018-08-05T14:04:09+08:00">2018-08-05</time>
             
 
             
@@ -412,7 +412,7 @@
 </blockquote>
 <a id="more"></a>
 <h2 id="Hexo配置"><a href="#Hexo配置" class="headerlink" title="Hexo配置"></a>Hexo配置</h2><h3 id="站点配置"><a href="#站点配置" class="headerlink" title="站点配置"></a>站点配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Site</span><br><span class="line">title: Dr&apos;s Note</span><br><span class="line">subtitle: I am always on the way</span><br><span class="line">description: 我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。 </span><br><span class="line">keywords: 网络安全,备忘录</span><br><span class="line">author: Dr</span><br><span class="line">language: zh-CN</span><br><span class="line">timezone: Asia/Shanghai</span><br></pre></td></tr></table></figure>
-<h3 id="发布配置"><a href="#发布配置" class="headerlink" title="发布配置"></a>发布配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git:git@github.com:0x4472/0x4472.github.io</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<h3 id="发布配置"><a href="#发布配置" class="headerlink" title="发布配置"></a>发布配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git@github.com:0x4472/0x4472.github.io</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
 <p><em>注意repo的格式需要写成git:<a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a>:user/repo的形式，利用https协议在发布时会仍然让输入密码</em></p>
 <h3 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h3><p>将需要配置的主题下载至themes文件夹，然后在配置文件中配置<code>themes: themeName</code></p>
 <h2 id="主题配置"><a href="#主题配置" class="headerlink" title="主题配置"></a>主题配置</h2><h3 id="配置菜单"><a href="#配置菜单" class="headerlink" title="配置菜单"></a>配置菜单</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menu:</span><br><span class="line">  home: / || home</span><br><span class="line">  about: /about/ || user</span><br><span class="line">  tags: /tags/ || tags</span><br><span class="line">  categories: /categories/ || th</span><br><span class="line">  archives: /archives/ || archive</span><br><span class="line">  #schedule: /schedule/ || calendar</span><br><span class="line">  #sitemap: /sitemap.xml || sitemap</span><br><span class="line">  #commonweal: /404/ || heartbeat</span><br></pre></td></tr></table></figure>
