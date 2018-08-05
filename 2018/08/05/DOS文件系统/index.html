@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="通过LinuxGPT分区读取程序对GPT有了一个比较深入的了解,接下来再查看一下常见的DOS分区表，与其有什么不一样的地方。">
+<meta name="keywords" content="DOS,文件系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DOS文件系统">
+<meta property="og:url" content="http://yoursite.com/2018/08/05/DOS文件系统/index.html">
+<meta property="og:site_name" content="Dr&#39;s Note">
+<meta property="og:description" content="通过LinuxGPT分区读取程序对GPT有了一个比较深入的了解,接下来再查看一下常见的DOS分区表，与其有什么不一样的地方。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-05T05:56:49.255Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DOS文件系统">
+<meta name="twitter:description" content="通过LinuxGPT分区读取程序对GPT有了一个比较深入的了解,接下来再查看一下常见的DOS分区表，与其有什么不一样的地方。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/05/DOS文件系统/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>DOS文件系统 | Dr's Note</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dr's Note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">I am always on the way</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/DOS文件系统/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dr">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dr's Note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DOS文件系统
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-08-05 13:50:00 / 修改时间：13:56:49" itemprop="dateCreated datePublished" datetime="2018-08-05T13:50:00+08:00">2018-08-05</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算机系统/" itemprop="url" rel="index"><span itemprop="name">计算机系统</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>通过LinuxGPT分区读取程序对GPT有了一个比较深入的了解,接下来再查看一下常见的DOS分区表，与其有什么不一样的地方。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="DOS分区"><a href="#DOS分区" class="headerlink" title="DOS分区"></a>DOS分区</h2><p>采用MBR磁盘分区的方式进行分区的设备。在Linux中利用fdisk -l命令会在Disklable type后面显示为dos。DOS分区与GPT分区表存储的位置不一致。DOS分区表存储在第一扇区(在MBR当中)，而GPT分区表一般存储在第二扇区。</p>
+<h3 id="MBR"><a href="#MBR" class="headerlink" title="MBR"></a>MBR</h3><p>MBR(Master Boot Record)主引导记录，一般位于磁盘最开始的位置 ，即C/H/S(柱面/磁头/扇区)为0/0/0的位置,占用一个扇区512字节。由四部分组成：引导程序、磁盘签名、分区表、结束标志。</p>
+<h4 id="MBR结构"><a href="#MBR结构" class="headerlink" title="MBR结构"></a>MBR结构</h4><p>|———–|———-|———-|<br>| 引导程序 | 分区表 | 结束标志 |</p>
+<h4 id="引导程序-MBR"><a href="#引导程序-MBR" class="headerlink" title="引导程序(MBR)"></a>引导程序(MBR)</h4><p>0 ~ 1B7H: 446Byte,存储引导程序。当BIOS自检完成之后便会将硬盘第一个扇区读入内存当中，然后BIOS检查内存中最后的两个字节是否为0xaa55，不等于则尝试其它介质,等于则进入该启动程序。<br>0x00 ~ 0x1B7  : 440 : 引导程序<br>0x1B8 ~ 0x1BB : 4   ：磁盘签名<br>0x1BC ~ 0x1BD : 2   : 保留</p>
+<h4 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h4><p>下面的位置表示偏移位置，而不是所说的实际位置。<br>0x00 1Byte 引导标志,标识是否为活动分区<br>0x01 1Byte 起始磁头<br>0x02 ~ 0x03 2Byte 6bit表示起始扇区,10Bit表示起始柱面<br>0x04 1Byte 分区类型<br>0x05 1Byte 结束磁头<br>0x06 ~ 0x07 2Byte 6bit表示结束扇区,10bit表示结束柱面<br>0x08 ~ 0xA1 4Byte 本分区之前的扇区数<br>0xA2 ~ 0xA5 4Byte 本分区的总扇区数<br>在每个分区当中会根据当时格式化时的设置,格式化不同的文件系统。因此在接下来读取每个分区当中的内容时，就需要按照该分区的文件系统格式进行读取。</p>
+<h4 id="结束标志"><a href="#结束标志" class="headerlink" title="结束标志"></a>结束标志</h4><p>0x00</p>
+<h3 id="FAT32"><a href="#FAT32" class="headerlink" title="FAT32"></a>FAT32</h3><h4 id="FAT32结构"><a href="#FAT32结构" class="headerlink" title="FAT32结构"></a>FAT32结构</h4><p>|—————|———-|———-|———|<br>| DBR和保留扇区 | FAT1 | FAT2 | DATA |</p>
+<h4 id="DBR和保留扇区"><a href="#DBR和保留扇区" class="headerlink" title="DBR和保留扇区"></a>DBR和保留扇区</h4><p>DOS BOOT Record 操作系统引导记录，由五部分组成:跳转指令，OEM代码、BPB、引导程序和结束标志<br>0x00 ~ 0x02 3Byte 将程序执行流程跳转到引导程序起始处<br>0x03 ~ 0xA0 8Byte OEM代码，由格式化的厂商规定<br>0x0B ~ 0x58 79Byte  BPB(BIOS Parameter Block),<br>0x5A ~ 0x1FD 420Byte 引导程序，Win98之前的程序，这段代码负责完成DOS三个系统文件的装入，Win2000之后的系统，则负责将NTLDR文件装入，Win7系统负责将BOOTMGR装入。<br>0x1FE ~ 0x1FF 2Byte 结束标志，0x55AA</p>
+<h4 id="FAT1-和-FAT2"><a href="#FAT1-和-FAT2" class="headerlink" title="FAT1 和 FAT2"></a>FAT1 和 FAT2</h4><p>FAT(File Allocation Table)文件分配表，记录簇的使用情况和下一个簇的簇号。FAT2是FAT1的备份。</p>
+<h4 id="DATA"><a href="#DATA" class="headerlink" title="DATA"></a>DATA</h4><p>数据记录区</p>
+<h3 id="BPB"><a href="#BPB" class="headerlink" title="BPB"></a>BPB</h3><p>BIOS Parameter Block：BIOS参数块，对整个文件系统中比较重要的信息。其数据结构如下：<br>0x00 ~ 0x01 2Byte 每扇区字节数<br>0x02        1Byte 每簇扇区数<br>0x03 ~ 0x04 2Byte DOS保留扇区数<br>0x05        1Byte FAT表个数<br>0x06 ~ 0x09 4Byte 未使用<br>0xA0        1Byte 介质描述符<br>0xA1 ~ 0xA2 2Byte 未用<br>0xA3 ~ 0xA4 2Byte 每磁道扇区数<br>0xA5 ~ 0xA6 2Byte 磁头数<br>0xA7 ~ 0xAB 4Byte 隐藏扇区<br>0xAC ~ 0xAF 4Byte 该分区的扇区总数<br>0xB0 ~ 0xB3 4Byte 每FAT扇区数<br>0xB4 ~ 0xB5 2Byte 标记<br>0xB6 ~ 0xB7 2Byte 版本<br>0xB8 ~ 0xBB 4Byte 根目录首簇号<br>0xBC ~ 0xBD 2Byte 文件系统扇区号<br>0xBE ~ 0xBF 2Byte DBR备份扇区号<br>0xC0 ~ 0xCC 12Byte 保留<br>0xCD        1Byte BIOS驱动器号<br>0xCE        1Byte 未用<br>0xCF        1Byte 扩展引导标记<br>0xD0 ~ 0xD3 4Byte 卷序列号<br>0xD4 ~ 0xDE 11Byte 卷标<br>0xDF ~ 0xE6 8Byte 文件系统类型<br>通过上面可以看出，文件系统的所有参数都会记录在BPB当中。<br>遗留问题，上面的结构体不是自动内存对齐的，怎么搞才可以准确的读取出数据</p>
+<h2 id="MBR与GRUB"><a href="#MBR与GRUB" class="headerlink" title="MBR与GRUB"></a>MBR与GRUB</h2><p>  MBR是属于硬盘的结构，不属于任何系统。而GRUB是一个多重操作系统启动管理器，是属于操作系统的一个应用程序，因此GRUB不会写入MBR，而是由MBR引导出GRUB进行多重启动。会出现这种的原因是，每个文件系统都会在开始部分预留出一段空间存放引导引导加载程序。这也就为多系统启动提供了可能。比较常见的多重操作系统启动管理器有(NTLOADER、GRUE、LILO)。</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><a href="https://blog.csdn.net/yuliyige/article/details/14815619" target="_blank" rel="noopener">数据恢复软件设计与实现(三)</a></li>
+<li><a href="https://www.cnblogs.com/hopeworld/archive/2011/03/27/1997298.html" target="_blank" rel="noopener">硬盘结构简介的好文(转)—MBR、分区表、CHS等概念</a></li>
+<li><a href="http://ask.zol.com.cn/x/4598955.html" target="_blank" rel="noopener">MBR和GRUB什么关系</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DOS/" rel="tag"># DOS</a>
+          
+            <a href="/tags/文件系统/" rel="tag"># 文件系统</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/05/Linux系统中实现GPT分区读取程序/" rel="next" title="Linux系统中实现GPT分区读取程序">
+                <i class="fa fa-chevron-left"></i> Linux系统中实现GPT分区读取程序
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Dr</p>
+              <p class="site-description motion-element" itemprop="description">我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DOS分区"><span class="nav-number">1.</span> <span class="nav-text">DOS分区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR"><span class="nav-number">1.1.</span> <span class="nav-text">MBR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MBR结构"><span class="nav-number">1.1.1.</span> <span class="nav-text">MBR结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#引导程序-MBR"><span class="nav-number">1.1.2.</span> <span class="nav-text">引导程序(MBR)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分区表"><span class="nav-number">1.1.3.</span> <span class="nav-text">分区表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结束标志"><span class="nav-number">1.1.4.</span> <span class="nav-text">结束标志</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FAT32"><span class="nav-number">1.2.</span> <span class="nav-text">FAT32</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FAT32结构"><span class="nav-number">1.2.1.</span> <span class="nav-text">FAT32结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DBR和保留扇区"><span class="nav-number">1.2.2.</span> <span class="nav-text">DBR和保留扇区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FAT1-和-FAT2"><span class="nav-number">1.2.3.</span> <span class="nav-text">FAT1 和 FAT2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DATA"><span class="nav-number">1.2.4.</span> <span class="nav-text">DATA</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BPB"><span class="nav-number">1.3.</span> <span class="nav-text">BPB</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBR与GRUB"><span class="nav-number">2.</span> <span class="nav-text">MBR与GRUB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">3.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dr</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

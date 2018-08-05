@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="今天突然想学习Linux下的文件结构，就想利用C语言实现一个读取系统分区表及分区中各个Node的程序。此笔记是对实现这一过程的记录。">
+<meta name="keywords" content="GPT,系统分区,C语言编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux系统中实现GPT分区读取程序">
+<meta property="og:url" content="http://yoursite.com/2018/08/05/Linux系统中实现GPT分区读取程序/index.html">
+<meta property="og:site_name" content="Dr&#39;s Note">
+<meta property="og:description" content="今天突然想学习Linux下的文件结构，就想利用C语言实现一个读取系统分区表及分区中各个Node的程序。此笔记是对实现这一过程的记录。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-05T05:48:16.595Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux系统中实现GPT分区读取程序">
+<meta name="twitter:description" content="今天突然想学习Linux下的文件结构，就想利用C语言实现一个读取系统分区表及分区中各个Node的程序。此笔记是对实现这一过程的记录。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/05/Linux系统中实现GPT分区读取程序/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Linux系统中实现GPT分区读取程序 | Dr's Note</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dr's Note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">I am always on the way</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/Linux系统中实现GPT分区读取程序/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dr">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dr's Note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux系统中实现GPT分区读取程序
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-08-05 13:29:55 / 修改时间：13:48:16" itemprop="dateCreated datePublished" datetime="2018-08-05T13:29:55+08:00">2018-08-05</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算机系统/" itemprop="url" rel="index"><span itemprop="name">计算机系统</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>今天突然想学习Linux下的文件结构，就想利用C语言实现一个读取系统分区表及分区中各个Node的程序。此笔记是对实现这一过程的记录。</p>
+</blockquote>
+<a id="more"></a> 
+<p>好久都没有写过c语言了，此时需要使用c语言实现想要的功能，表示压力山大，利用此篇文章记录一下自己实现的过程以其中碰到的一些比较有意思的点，算是顺便学习C语言了吧。本文是一篇备忘录形式的记录型文章，可能会出现逻辑混乱等问题。</p>
+<h2 id="C语言中的数据类型"><a href="#C语言中的数据类型" class="headerlink" title="C语言中的数据类型"></a>C语言中的数据类型</h2><p>先复习下C语言的基本知识</p>
+<h3 id="基本类型"><a href="#基本类型" class="headerlink" title="基本类型:"></a>基本类型:</h3><h4 id="数值类型"><a href="#数值类型" class="headerlink" title="数值类型:"></a>数值类型:</h4><ul>
+<li>整型：short(短整型)、int(整型)、long(长整型)</li>
+<li>浮点型：float(单精度型)、double(双精度型)</li>
+</ul>
+<h4 id="字符类型"><a href="#字符类型" class="headerlink" title="字符类型"></a>字符类型</h4><ul>
+<li>字符: char</li>
+</ul>
+<h4 id="构造类型"><a href="#构造类型" class="headerlink" title="构造类型"></a>构造类型</h4><ul>
+<li>数组: int p[]</li>
+<li>结构体: struct</li>
+<li>共用体: union</li>
+</ul>
+<h4 id="枚举类型"><a href="#枚举类型" class="headerlink" title="枚举类型"></a>枚举类型</h4><p>enum</p>
+<h4 id="C99标准定义的数据类型"><a href="#C99标准定义的数据类型" class="headerlink" title="C99标准定义的数据类型"></a>C99标准定义的数据类型</h4><ul>
+<li>uint8_t 1Byte</li>
+<li>uint16_t 2Byte</li>
+<li>uint32_t 4Byte</li>
+<li>uint64_t 8Byte<br><em>在不同位数的操作系统下，每个基本数据类型所使用的字节数不一致。</em></li>
+</ul>
+<h3 id="文件操作函数"><a href="#文件操作函数" class="headerlink" title="文件操作函数"></a>文件操作函数</h3><p>想要读取磁盘中的数据，可以直接利用<code>open</code>\<code>fopen</code>函数打开对应的磁盘即可。利用该函数读取数据的方法与平常读取文件的方法一致。<br>linux下面对于文件的操作有两种API:[1].(<code>open</code>,<code>read</code>,<code>write</code>,<code>close</code>),[2].(<code>fopen</code>,<code>fread</code>,<code>fwrite</code>,<code>fclose</code>)<br>[2]是标准的C库函数，[1]是POSIX定义的，属于UNIX的系统调用。</p>
+<h4 id="fopen"><a href="#fopen" class="headerlink" title="fopen"></a>fopen</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FILE* fopen(const char* path,const char* mode)</span><br><span class="line">fread/fwrite</span><br><span class="line">fread(buffer,size,count,fp)/fwrite(buffer,size,count,fp)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>buffer:一个指针，读入数据的存放地址</li>
+<li>size:要读写的字节数</li>
+<li>count:要读写多少size字节的数据项</li>
+<li>fp:文件型指针(要读取的文件)</li>
+<li>返回值，如果读到了文件末尾，则返回值小于count</li>
+</ul>
+<h4 id="feof"><a href="#feof" class="headerlink" title="feof"></a>feof</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int feof(FILE *fp)</span><br></pre></td></tr></table></figure>
+<p>检测当前文件流上的文件结束标识，判断是否读到了文件末尾。检测到了返回1，否则返回0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fgetc/fputc</span><br></pre></td></tr></table></figure></p>
+<p>从指定的文件中读取或写入一个字符,成功返回读取的数值，失败返回-1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fgetc(fp)/fputc(ch,fp)</span><br></pre></td></tr></table></figure></p>
+<h4 id="fgets-fputs"><a href="#fgets-fputs" class="headerlink" title="fgets/fputs"></a>fgets/fputs</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">char* fgets(char* str,int num, FILE* fp)</span><br><span class="line">fputs(char* s,FILE* fp)</span><br></pre></td></tr></table></figure>
+<h4 id="ftell"><a href="#ftell" class="headerlink" title="ftell"></a>ftell</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">long ftell(FILE* fp)</span><br></pre></td></tr></table></figure>
+<p>得到流式文件的当前读写位置，返回的是当前读写位置偏离文件头部的字节数。</p>
+<h4 id="fseek"><a href="#fseek" class="headerlink" title="fseek"></a>fseek</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int fseek(FILE* fp,long offset,int origin)</span><br></pre></td></tr></table></figure>
+<p>将fp文件读写位置指针移动到指定位置。origin值的是起始点，有三个常量：SEEK_SET 0 文件开头;SEEK_CUR 1 文件当前位置;SEEK_END 2 文件末尾。</p>
+<h4 id="fclose"><a href="#fclose" class="headerlink" title="fclose"></a>fclose</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fclose(FILE* fp)</span><br></pre></td></tr></table></figure>
+<h3 id="输出函数"><a href="#输出函数" class="headerlink" title="输出函数"></a>输出函数</h3><p>有printf 和fprintf两种方法，都是C中用于输出数据的。但是fprintf 可以根据指定的format(格式)发送数据到由stream指定的文件。<br><code>printf(&quot;sdfasdf&quot;)
+fprintf(stderr,&quot;&quot;%s&quot;,&quot;sdfa&quot;);
+`</code></p>
+<ul>
+<li>%d:十进制有符号整数</li>
+<li>%u:十进制无符号整数</li>
+<li>%f:浮点数</li>
+<li>%s:字符串</li>
+<li>%c:单个字符</li>
+<li>%p:指针的值</li>
+<li>%e:指数形式的浮点数</li>
+<li>%x:无符号以十六进制表示的整数</li>
+<li>%0:无符号以八进制表示整数</li>
+<li>%llx：十六进制格式化输出uint64_t类型的数据</li>
+</ul>
+<p>输出时将char转换为int输出时需要&amp;FF的原因，C语言中，(char)整型变量 = 字符型变量，(int)字符型变量=整型变量。直接输出char可能会因为符号位的影响输出负数，而通过&amp;FF，进行了整型提升操作，从而减小符号位的影响。</p>
+<h2 id="启动程序"><a href="#启动程序" class="headerlink" title="启动程序"></a>启动程序</h2><p>BIOS、UEFI都是固化到主板上的。MBR(只支持不超过2T的硬盘)、GPT是存在硬盘当中的，存储硬盘分区信息的结构。Windows不支持BIOS+GPT、UEFI+MBR的形式启动,windows的启动方式为BIOS+MBR或UEFI+GPT(Win8)。而Linux系统支持各种方式的启动。<br>UEFI固化到主板上不是准确的说法，因为UEFI是一种标准，其具体的实现需要依靠各个厂商的自家实现<br>Linux启动时，BIOS自检完成，然后加载MBR+之后将GRUB/Lilo复制到物理内存的0x7c00,GRUB就是存储在MBR中的一段程序。<br>传统的MBR采用CHS的磁盘寻址方式，在其内部使用4个字节描述磁盘或分区的大小，最多支持4个分区，最大支持2TB的硬盘。GPT分区则允许硬盘有128个主分区，支持2TB以上容量的硬盘。</p>
+<h2 id="MBR分区结构："><a href="#MBR分区结构：" class="headerlink" title="MBR分区结构："></a>MBR分区结构：</h2><p>MBR占521Byte，分为主引导程序即启动代码及数据(446Byte)、硬盘分区(64Byte,每分区16Byte)、结束标志(0x55AA)三个部分。<br>|———–446———-|—-64—-|—2—|<br>| 启动代码及数据 | 硬盘分区 | 标志 |</p>
+<h3 id="16字节分区"><a href="#16字节分区" class="headerlink" title="16字节分区:"></a>16字节分区:</h3><p>  0x01BE:1Byte，值0x80，引导标志,指明该分区是否是活动分区,0x00为非活动分区。<br>  0x01BF:1Byte，值0x01，开始磁头<br>  0x01C0:6Bit，值0x01,起始扇区</p>
+<h2 id="GPT分区结构："><a href="#GPT分区结构：" class="headerlink" title="GPT分区结构："></a>GPT分区结构：</h2><p>|———|——-|——–|———-|————|———–|<br>| 保护MBR | GPT头 | 分区表 | 分区区域 | 分区表备份 | GPT头备份 |</p>
+<h3 id="保护MBR"><a href="#保护MBR" class="headerlink" title="保护MBR:"></a>保护MBR:</h3><p>位于0号扇区，其中包含磁盘签名、MBR分区表、结束标志。没有结束标志,分区表中只有一个分区表项，类型是0xEE,GPT不使用该扇区记录分区表。<br><em>整数以小端法表示</em></p>
+<h3 id="GPT头结构："><a href="#GPT头结构：" class="headerlink" title="GPT头结构："></a>GPT头结构：</h3><p>00 ~ 07: GPT头签名: 8Byte,1号扇区，GPT头定义分区表的起始位置、结束位置、分区表项个数，大小等。”45 46 49 20 50 41 52 54”(EFI PART)<br>08 ~ 0B: 版本号: 4Byte,<br>0C ~ 0F: GPT头的大小：4Byte,通常为”5C 00 00 00”(0x5C),即92字节。<br>10 ~ 13: GPT头CRC校验和：4Byte，计算时将这个字段本身看作0值。<br>14 ~ 17: 保留：4Byte，必须为”00 00 00 00“<br>18 ~ 1F: EFI信息区：8Byte，EFI信息区(GPT头)的起始扇区号,通常为”01 00 00 00 00 00 00 00“,即LBA1<br>20 ~ 27: EFI信息区：8Byte, EFI信息区(GPT头)的备份位置的扇区号，也就是EFI区域结束扇区号。通常是整个磁盘最末一个扇区。<br>28 ~ 2F: GPT分区区域的起始扇区号：8Byte,通常为”22 00 00 00 00 00 00 00”即LBA34<br>30 ~ 37: GPT分区区域的结束扇区号：8Byte，通常是倒数第34扇区。<br>38 ~ 47: 磁盘GUID：16Byte(全球唯一的标识符)<br>48 ~ 4F: 分区表起始扇区号：8Byte,通常为”02 00 00 00 00 00 00 00“,即LBA2<br>50 ~ 53: 分区表总项数：4Byte,通常限定为”80 00 00 00”,也就是128个<br>54 ~ 57: 每个分区表项占用字节数： 4Byte, 通常限定为”80 00 00 00“也就是128Byte<br>57 ~ 5B: CRC校验和：4Byte<br>保5C ~: 保留：5c~ 全零填充,一般至扇区结束</p>
+<p>4546 4920 5041 5254   8      GPT头签名EFI PART<br>0000 0100             4      版本号<br>5c00 0000             4      GPT头的大小<br>fdd8 bada             4      GPT头校验和<br>0000 0000             4      保留<br>0100 0000 0000 0000   8      EFI信息区的起始扇区<br>2f60 383a 0000 0000   8      EFI信息区备份位置的扇区号,通常是整个磁盘最后一个扇区<br>2200 0000 0000 0000   8      GPT分区区域的起始扇区号<br>0e60 383a 0000 0000   8      GPT分区区域的结束扇区号，通常为倒数第34扇区<br>2b00 <strong><strong> </strong></strong> <strong><strong> </strong></strong> <strong><strong> </strong></strong> da13   16    磁盘GUID<br>0200 0000 0000 0000   8      分区表起始扇区<br>8000 0000             4      分区表总项数<br>8000 0000             4      每个分区表占用的字节数<br>3616 c901             4      CRC校验和</p>
+<h3 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h3><p>GPT头(第二扇区)后面紧跟着分区表，分区表的结构如下:<br>00 ~ 0F: 16Byte :用GUID标识的分区类型<br>10 ~ 1F: 16Byte :用GUID标识的分区唯一标示符<br>20 ~ 27: 8Byte :该分区的起始扇区，用LBA值表示<br>28 ~ 2F: 8Byte :该分区的结束扇区(包含),用LBA值表示，通常是奇数<br>30 ~ 37： 8Byte :该分区的属性标志<br>38 ~ 7F: * :UTF-16LE编码的人类可读的分区名称,最大32个字符。</p>
+<h2 id="为什么第一个分区从2048扇区开始"><a href="#为什么第一个分区从2048扇区开始" class="headerlink" title="为什么第一个分区从2048扇区开始"></a>为什么第一个分区从2048扇区开始</h2><p>由于EFI的兴起，要流出1MB的空间给EFI的启动代码。fdisk分区时会自动留出</p>
+<h2 id="MBR与分区系统"><a href="#MBR与分区系统" class="headerlink" title="MBR与分区系统"></a>MBR与分区系统</h2><p>分区采用不同的文件系统格式化之后，在文件系统之中也会有专门的区域来存放MBR等信息,这样才能实现多重引导(在一块硬盘中安装多个操作系统)。</p>
+<h2 id="代码地址"><a href="#代码地址" class="headerlink" title="代码地址"></a>代码地址</h2><p><a href="https://github.com/0x4472/c_etude" target="_blank" rel="noopener">c_etude</a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><a href="https://blog.csdn.net/xiaowei871343234/article/details/50147217" target="_blank" rel="noopener">GPT分区结构</a></li>
+<li><a href="http://www.cnblogs.com/qiuyi21/p/3569194.html" target="_blank" rel="noopener">C语言实现GPT头和分区表的读取</a></li>
+<li><a href="http://www.jinbuguo.com/storage/gpt.html" target="_blank" rel="noopener">GPT分区详解</a></li>
+<li><a href="https://www.cnblogs.com/silenceli/p/3472101.html" target="_blank" rel="noopener">为什么Linux的fdisk分区时第一块磁盘分区的First Sector是2048？</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/GPT/" rel="tag"># GPT</a>
+          
+            <a href="/tags/系统分区/" rel="tag"># 系统分区</a>
+          
+            <a href="/tags/C语言编程/" rel="tag"># C语言编程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/05/Wifi综述/" rel="next" title="Wifi综述">
+                <i class="fa fa-chevron-left"></i> Wifi综述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/05/DOS文件系统/" rel="prev" title="DOS文件系统">
+                DOS文件系统 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Dr</p>
+              <p class="site-description motion-element" itemprop="description">我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C语言中的数据类型"><span class="nav-number">1.</span> <span class="nav-text">C语言中的数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本类型"><span class="nav-number">1.1.</span> <span class="nav-text">基本类型:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数值类型"><span class="nav-number">1.1.1.</span> <span class="nav-text">数值类型:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符类型"><span class="nav-number">1.1.2.</span> <span class="nav-text">字符类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#构造类型"><span class="nav-number">1.1.3.</span> <span class="nav-text">构造类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#枚举类型"><span class="nav-number">1.1.4.</span> <span class="nav-text">枚举类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C99标准定义的数据类型"><span class="nav-number">1.1.5.</span> <span class="nav-text">C99标准定义的数据类型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件操作函数"><span class="nav-number">1.2.</span> <span class="nav-text">文件操作函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fopen"><span class="nav-number">1.2.1.</span> <span class="nav-text">fopen</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#feof"><span class="nav-number">1.2.2.</span> <span class="nav-text">feof</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fgets-fputs"><span class="nav-number">1.2.3.</span> <span class="nav-text">fgets/fputs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ftell"><span class="nav-number">1.2.4.</span> <span class="nav-text">ftell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fseek"><span class="nav-number">1.2.5.</span> <span class="nav-text">fseek</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fclose"><span class="nav-number">1.2.6.</span> <span class="nav-text">fclose</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输出函数"><span class="nav-number">1.3.</span> <span class="nav-text">输出函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动程序"><span class="nav-number">2.</span> <span class="nav-text">启动程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBR分区结构："><span class="nav-number">3.</span> <span class="nav-text">MBR分区结构：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16字节分区"><span class="nav-number">3.1.</span> <span class="nav-text">16字节分区:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GPT分区结构："><span class="nav-number">4.</span> <span class="nav-text">GPT分区结构：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#保护MBR"><span class="nav-number">4.1.</span> <span class="nav-text">保护MBR:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GPT头结构："><span class="nav-number">4.2.</span> <span class="nav-text">GPT头结构：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分区表"><span class="nav-number">4.3.</span> <span class="nav-text">分区表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么第一个分区从2048扇区开始"><span class="nav-number">5.</span> <span class="nav-text">为什么第一个分区从2048扇区开始</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBR与分区系统"><span class="nav-number">6.</span> <span class="nav-text">MBR与分区系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码地址"><span class="nav-number">7.</span> <span class="nav-text">代码地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">8.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dr</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

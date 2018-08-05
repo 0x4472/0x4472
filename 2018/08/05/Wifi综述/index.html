@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Wi-Fi是Wi-Fi联盟制造商的商标做为产品的品牌认证，是一个创建于IEEE 802.11标准的无线局域网技术。基于两套系统的密切相关，也常有人把Wi-Fi当做IEEE 802.11标准的同义术语。“Wi-Fi”常被写成“WiFi”或“Wifi”，但是它们并没有被Wi-Fi联盟认可。">
+<meta name="keywords" content="协议,Wifi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wifi综述">
+<meta property="og:url" content="http://yoursite.com/2018/08/05/Wifi综述/index.html">
+<meta property="og:site_name" content="Dr&#39;s Note">
+<meta property="og:description" content="Wi-Fi是Wi-Fi联盟制造商的商标做为产品的品牌认证，是一个创建于IEEE 802.11标准的无线局域网技术。基于两套系统的密切相关，也常有人把Wi-Fi当做IEEE 802.11标准的同义术语。“Wi-Fi”常被写成“WiFi”或“Wifi”，但是它们并没有被Wi-Fi联盟认可。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-05T05:47:57.491Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Wifi综述">
+<meta name="twitter:description" content="Wi-Fi是Wi-Fi联盟制造商的商标做为产品的品牌认证，是一个创建于IEEE 802.11标准的无线局域网技术。基于两套系统的密切相关，也常有人把Wi-Fi当做IEEE 802.11标准的同义术语。“Wi-Fi”常被写成“WiFi”或“Wifi”，但是它们并没有被Wi-Fi联盟认可。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/05/Wifi综述/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Wifi综述 | Dr's Note</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dr's Note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">I am always on the way</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/Wifi综述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dr">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dr's Note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Wifi综述
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-08-05 13:06:27 / 修改时间：13:47:57" itemprop="dateCreated datePublished" datetime="2018-08-05T13:06:27+08:00">2018-08-05</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算机系统/" itemprop="url" rel="index"><span itemprop="name">计算机系统</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>Wi-Fi是Wi-Fi联盟制造商的商标做为产品的品牌认证，是一个创建于IEEE 802.11标准的无线局域网技术。基于两套系统的密切相关，也常有人把Wi-Fi当做IEEE 802.11标准的同义术语。“Wi-Fi”常被写成“WiFi”或“Wifi”，但是它们并没有被Wi-Fi联盟认可。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="Wifi相关概念"><a href="#Wifi相关概念" class="headerlink" title="Wifi相关概念"></a>Wifi相关概念</h2><h3 id="WiFi"><a href="#WiFi" class="headerlink" title="WiFi"></a>WiFi</h3><p>Wifi是Wi-Fi联盟制造商的商标作为产品的品牌认证，是一个创建于IEEE802.11标准的无线局域网技术,主要用于短距离的无线互联网传输。</p>
+<h3 id="Wlan"><a href="#Wlan" class="headerlink" title="Wlan"></a>Wlan</h3><p>Wlan全称Wireless Local Area Networks,中文名称为无线局域网络,是指利用射频技术，使用电磁波，在空中进行通信连接，用于弥补有线局域网的不足。Wlan并不是一种具体的网络标准，而是一种网络类型。Wifi是实现Wlan的一种技术，还有蓝牙，wimax等</p>
+<h3 id="802-11系列协议"><a href="#802-11系列协议" class="headerlink" title="802.11系列协议"></a>802.11系列协议</h3><p>IEEE802.11系列协议定义了设备之间的访问规则。无线局域网第一个版本(802.11)发表于1997年，其中定义了介质访问层和物理层。物理层定义了工作在2.4GHz的ISM频段上的两种无线调频方式和一种红外传输的方式。1999年加上了两个补充版本：802.11a定义了一个在5GHz ISM频段上的数据传输速率可达54Mbit/s的物理层，802.11b定义了一个在2.4GHz的ISM频段上但传输速率高达11Mbit/s的物理层。由于2.4GHz的ISM频段为世界上绝大多数国家通用，因此802.11b得到最广泛的应用。802.11协议又做了各种补充，尤其2003年的802.11g协议定义了一个工作在2.4GHz的ISM频段上且传输速率高达54Mbit/s的物理层。</p>
+<h3 id="IEEE802"><a href="#IEEE802" class="headerlink" title="IEEE802"></a>IEEE802</h3><p>IEEE802是指IEEE标准中关于局域网和城域网的一些列标准。IEEE802中定义的服务和协议限定在OSI模型的最低两层(即物理层和数据链路层)。事实上，IEEE802将OSI的数据链路层分为两个子层，分别是逻辑链路控制(LLC,Logical Link Control)和介质访问控制(MAC,Media Access Control)。Ethernet以802.3协议作为其网络层以下的协议，而Wifi则以802.11作为其网络层以下的协议。目前LLC的作用已经消失了，很多厂商的适配器上就只有MAC协议</p>
+<h2 id="无线网的一些缺点"><a href="#无线网的一些缺点" class="headerlink" title="无线网的一些缺点"></a>无线网的一些缺点</h2><ol>
+<li>通信之前需要建立连接，有线网络直接利用线缆连接</li>
+<li>通信双方采用半双工的方式通信，有线网络可以采用全双工</li>
+<li>网络层以下出错的概率非常高，帧的重传概率很大，需要在网络层之下的协议添加重传机制。</li>
+<li>容易抓包，存在安全隐患</li>
+</ol>
+<h2 id="Wifi相关知识"><a href="#Wifi相关知识" class="headerlink" title="Wifi相关知识"></a>Wifi相关知识</h2><p>由于802.11g是现阶段普及范围最广的，因此以802.11g协议标准为例进行讲解。</p>
+<h3 id="主要实体原件"><a href="#主要实体原件" class="headerlink" title="主要实体原件"></a>主要实体原件</h3><h4 id="工作站-Station"><a href="#工作站-Station" class="headerlink" title="工作站(Station)"></a>工作站(Station)</h4><p>具有无线接入功能的电子设备(以下简称STA)</p>
+<h4 id="基站-Access-Point"><a href="#基站-Access-Point" class="headerlink" title="基站(Access Point)"></a>基站(Access Point)</h4><p>802.11网络所使用的帧必须经过转换才能传到其它不同类型的网络,具有无线至有线桥接功能的设备称为基站(Access Point,AP)</p>
+<h4 id="频谱"><a href="#频谱" class="headerlink" title="频谱"></a>频谱</h4><p>802.11g标准工作在2.4GHz频段，频率范围为2.400-2.4835GHz,划分为14个信道，相邻的多个信道存在频率重叠，整个频段内只有3个（1，6，11）互不干扰。</p>
+<h4 id="服务集"><a href="#服务集" class="headerlink" title="服务集"></a>服务集</h4><p>服务集(Service Set)是用以描述802.11无线网络的构成单位(一组互相有联系的无线设备),使用服务集标识(SSID)作为识别。可以分为独立基本服务集(IBSS)、基本服务集(BSS)和扩展服务集(ESS)三类。</p>
+<h4 id="服务集标识-Service-Set-Identifier-SSID"><a href="#服务集标识-Service-Set-Identifier-SSID" class="headerlink" title="服务集标识(Service Set Identifier,SSID)"></a>服务集标识(Service Set Identifier,SSID)</h4><p>服务集标识(Service Set Identifier,SSID)是一个或一组基础架构模式中无线网络的标识，依照标识方式可细分为基本服务集标识和扩展服务集标识两种：</p>
+<h4 id="基本服务集标识-BSSID"><a href="#基本服务集标识-BSSID" class="headerlink" title="基本服务集标识(BSSID)"></a>基本服务集标识(BSSID)</h4><p>表示AP数据链路层的MAC地址。</p>
+<h4 id="扩展服务集标识-ESSID"><a href="#扩展服务集标识-ESSID" class="headerlink" title="扩展服务集标识(ESSID)"></a>扩展服务集标识(ESSID)</h4><p>一个最长32字节且区分大小写的字符串，表示无线网络的名称。AP可以选择在信标中暴露自己的ESSID(称为SSID广播),也可以选择隐藏。多个AP可以拥有同一个ESSID,以实现客户端在AP之间漫游的能力。但BSSID必须唯一，因为数据链路层中MAC地址是唯一的。<br>在基础架构模式下，所有客户端和一个(BSS)或多个(ESS)访问点关联，各客户端间不直接互相通信。</p>
+<h4 id="基本服务集"><a href="#基本服务集" class="headerlink" title="基本服务集"></a>基本服务集</h4><p>即使两个AP采用相同的ESSID，设备也无法在这两个AP之间进行漫游。可类比于现实生活中各独立的AP之间是独立的。</p>
+<h4 id="扩展服务集"><a href="#扩展服务集" class="headerlink" title="扩展服务集"></a>扩展服务集</h4><p>多个AP采用相同的ESSID,且AP之间的信号会有一定的重合，AP之间会有设备进行互联，从而可以让连接到AP的设备在多个AP中互相漫游(AP间采用的加密方式一致),AP需要设置不同的频段以防止干扰。可类比于现实生活中胖瘦AP的架构模式。</p>
+<h3 id="802-11帧"><a href="#802-11帧" class="headerlink" title="802.11帧"></a>802.11帧</h3><h4 id="管理帧-Management-Frame"><a href="#管理帧-Management-Frame" class="headerlink" title="管理帧(Management Frame)"></a>管理帧(Management Frame)</h4><p>用于STA与AP之间的协商、关系的控制</p>
+<ul>
+<li>Beacon Frame(wlan.fc.type_subtype==0x08): 信标帧，提供服务的AP会定时发送Beacon Frame以告知BSS的存在，并提供了BSS的一些基本信息，如BSSID,SSID(ESSID),Channel等。可以利用该信息来查看附近的AP信息。</li>
+<li>Probe Request/Probe Response(wlan.fc.type_subtype==0x04/wlan.fc.type_subtype==0x05):探测请求/探测响应。Probe Request由STA发出，用于探测周围的BSS。如果指定了SSID(ESSID)，则只有与之一致的BSS(BSS内的AP)会通过Probe Response进行响应。如果未指定，则所有BSS都会响应。与Beancon Frame一样，Probe Response提供了BSS的基本信息。(扫描AP)</li>
+<li>Authentication(wlan.fc.type_subtype==0x0B):包含认证类型(Authentication Algorithm)、认证进度(Authentication SEQ)和认证状态(status code)AP可以根据相关信息决定接收还是拒绝某个STA的加入(一般通过MAC地址进行认证,后面还有认证的环节)。在第一次连接(输入用户名密码)时未抓到该数据包)</li>
+<li>Deauthentication(wlan.fc.type_subtype==0x0C):解除认证，用来终结认证关系</li>
+<li>Association Request/Association Response(wlan.fc.type_subtype==0x00/wlan.fc.type_subtype==0x01):STA找到网络并通过认证，就会发送Association Request请求AP进行关联，AP以Association Response进行回应。</li>
+<li>Reassociation Request/Reassociation Response(wlan.fc.type_subtype==0x02/wlan.fc.type_subtype==0x03):STA远离原AP，在ESS中发现信号更强的AP时，发送该请求。<ul>
+<li>Disassociation(wlan.fc.type_subtype==0x0A):接触关联，STA向AP发送该数据帧，AP收到该请求后，释放为STA分配的资源。</li>
+</ul>
+</li>
+</ul>
+<h4 id="控制帧-Control-Frame"><a href="#控制帧-Control-Frame" class="headerlink" title="控制帧(Control Frame)"></a>控制帧(Control Frame)</h4><p> 用于竞争期间的握手通信和正向确认等，为数据帧的发送提供辅助。</p>
+<ul>
+<li>Power Save Poll (wlan.fc.type_subtype==0x0A):省电，轮询，休眠的AP定期发送该帧</li>
+<li>Request To Send(wlan.fc.type_subtype==0x0B):请求发送，表明A要向B发送数据</li>
+</ul>
+<h4 id="数据帧-Data-Frame"><a href="#数据帧-Data-Frame" class="headerlink" title="数据帧(Data Frame)"></a>数据帧(Data Frame)</h4><p>用于竞争期间和非竞争期间的数据传输。</p>
+<ul>
+<li>Data(wlan.fc.type_subtype==0x00):基本数据帧，包含了通信的基本数据。</li>
+<li>Null(wlan.fc.type_subtype==0x04):没有数据的空帧。<br><em>利用WireShark抓取这些帧时，需要将网卡设置为监听模式(Windows下会WinCap不支持,Linux下若命令行不支持，可采用手动的形式)。这是因为无线网卡会根据MAC过滤其捕捉到的数据包(网卡不过滤，网卡驱动也会过滤),而且网卡还会将802.11数据包的头转换成Ethernet的数据包头.</em></li>
+</ul>
+<h2 id="无线的接入过程"><a href="#无线的接入过程" class="headerlink" title="无线的接入过程"></a>无线的接入过程</h2><p>STA(工作站)启动初始化、正式开始使用AP传输数据帧之前，需要经过三个阶段才能够接入AP(802.11 MAC层负责客户端与AP间的通讯，功能包括扫描、接入、认证、加密、漫游和同步等功能):</p>
+<h3 id="扫描阶段"><a href="#扫描阶段" class="headerlink" title="扫描阶段"></a>扫描阶段</h3><ul>
+<li>主动扫描:STA依次在支持的信道发出Probe Request帧，从STA的存储的SSID记录中寻找相同SSID的AP，若找不到AP，则一致扫描下去。Wifi探针——通过监听该请求可以知道是否有某个设备进入BSS的范围(MAC地址)</li>
+<li>被动扫描:通过侦听AP定期发送的Beancon帧来发现网络(可以不设置SSID)。是否可以设置AP不发送该帧?直接获取到路由的信息,WPS信息也可以由该帧获取。</li>
+</ul>
+<h3 id="认证"><a href="#认证" class="headerlink" title="认证"></a>认证</h3><ul>
+<li>STA找到一个AP的SSID(ESSID)与其所属有的SSID相同之后，根据收到的AP信号强度，选择一个信号最强的AP，然后进入认证阶段。</li>
+<li>开放系统认证(open-system authentication)</li>
+<li>共享密钥认证(shared-key authentication,WEP)</li>
+<li>WPA(2) PSK认证(Pre-shared key,WPA/WPA2)</li>
+<li>802.1x EAP认证</li>
+</ul>
+<h3 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h3><ul>
+<li>AP向STA返回认证响应信息，身份证获得通过后，进入关联阶段。</li>
+<li>STA向AP发送关联请求</li>
+<li>AP向STA返回关联响应<br>首先客户端发送请求的广播(扫描)，AP A 和AP B发送响应请求。客户端检查是否存有AP A和AP B的SSID,然后再查看存有SSID的AP的信号强度。确认选择AP A，客户端向AP A发送认证请求(认证)(Authentication Request),AP A确认认证信息并返回(Authentication Response)，客户端向AP A发送关联请求(Assiociation Request),AP A确认关联请求(Association Response)。</li>
+</ul>
+<h2 id="认证与加密"><a href="#认证与加密" class="headerlink" title="认证与加密"></a>认证与加密</h2><p>Wifi中的认证算法通常有四种，开放认证、共享密钥认证、802.1x认证、psk认证。加密算法有三种：WEB加密(RC4)、TKIP加密(RC4)、CCMP加密(AES)。Wifi采用的安全策略就是认证+加密。</p>
+<ul>
+<li>WEP 认证:WEP 认证有两种，一种为Open System和Shared Key。</li>
+<li>Open System:开放系统认证，任何STA可接入该系统</li>
+<li>Shared Key:共享密钥方式。认证时服务端向客户端发送一个128bits的随机数。然后STA用密钥加密后返回到AP端。AP验证成功后则返回。WEP加密机制并不安全,可以采用通过收集数据包等方式破解WEP的Shared Key。</li>
+<li>WPA 认证:WPA认证有两个认证方法分别为WPA-psk和WPA2-psk(802.11i)(PSK:Pre share key)。</li>
+<li>WPA-psk:PSK认证算法+TKIP加密算法</li>
+<li>WPA2-pks:PSK认证算法+TKIP加密算法/CCMP加密算法。<br>STA以WPA模式与AP建立关联后，如果网络中有RADIUS服务器做为认证服务器，那么STA就使用802.1x方式进行认证;如果网络中没有RADIUS，STA与AP就会采用预共享密钥(PSK,Pre-Shared Key)的方式进行认证。<br>WPA-PSK/WPA2-PSK认证过程:AP首先会生成一个随机数ANonce,STA生成一个随机数SNonce。AP将其生成的随机数ANonce传送给STA(1)。STA利用收到ANonce生成PMK(PMK=PSK=PBKDF2(PASS,SSID,SSIDLENGTH,4096,256))。然后利用PMK计算PTK，之后对PTK进行计算获取到MIC。STA将SNonce和MIC传送给AP(2)。AP根据SNonce等信息生成PTK，即MIC，然后验证生成的MIC与STA传入的MIC是否一致。若一致AP通知STA是否使用一对一密钥，带有MIC(3)。STA响应(4)。<br><em>用airmon-ng套件去攻击WPA-PSK/WPA2-PSK的原理就是利用字典中的密码生成PSK(PMK)，然后依次计算出PTK和MIC，最后对比MIC是否相同。MIC的生成需要SNonce、ANonce等信息，因此需要抓取4次握手包。</em></li>
+<li>802.1x 认证:主要用于解决局域网用户的接入认证问题。是一种基于端口的网络接入控制协议，对端口上接入的用户设备通过认证来控制对网络资源的访问。(端口可以是物理端口也可以是VLAN一样的逻辑端口。相对于无线局域网，“端口”就是一条信道)。<br>802.1x认证系统采用网络应用系统典型的C/S结构，包括三个部分：客户端、设备端和认证服务器(Radius)。<br>客户端：局域网用户终端设备<br>设备端：对所连接的客户端进行认证，为客户端提供接入局域网的端口（物理端口/逻辑端口）。设备端还起一个中继代理的作用，用于接收客户端发送的EAP报文，然后再将EAP报文经过整理或封装转换成RADIUS识别的报文，向RADIUS服务器发送，从而实现认证。<br>认证服务器：为设备端提供认证服务的设备,是真正进行认证的设备,实现对用户进行认证、授权和计费，通常为RADIUS服务器。<br>设备的认证触发有多种方式，通常可以由客户端主动发起，也可以由设备端主动发起。“客户端主动发起”时，由客户端主动向设备端发送EAPOL-Start报文触发认证。而“设备端主动发起”用于支持不能主动发送EAPOL-Start报文的客户端，有多种触发方式：<br>DHCP报文触发：设备在收到用户的DHCP请求报文后会主动触发对用户的802.1x认证，仅适用于客户端采用DHCP方式自动分配IP的情形。(客户端有没有获取到IP?,直接使用静态IP会不会被绕过?)<br>源MAC未知报文触发：当设备收到源MAC地址未知的报文时主动触发对用户的802.1x认证。若设备在设置好的时长内没有收到客户端的响应，则重新发送该报文。(源MAC未知，通过修改MAC地址是不是就可以绕过认证？)</li>
+</ul>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><a href="http://www.6gdown.com/softedupage/59918.html" target="_blank" rel="noopener">WIFI 工作原理 WIFI基础知识入门学习教程</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/IEEE_802.11" target="_blank" rel="noopener">IEEE 802.11</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/IEEE_802.11g-2003" target="_blank" rel="noopener">IEEE 802.11g</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E6%97%A0%E7%BA%BF%E5%B1%80%E5%9F%9F%E7%BD%91" target="_blank" rel="noopener">无线局域网</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E6%9C%8D%E5%8A%A1%E9%9B%86_(%E6%97%A0%E7%BA%BF%E5%B1%80%E5%9F%9F%E7%BD%91" target="_blank" rel="noopener">服务集</a></li>
+<li><a href="https://blog.csdn.net/myarrow/article/details/7930131" target="_blank" rel="noopener">Wifi基本知识</a></li>
+<li><a href="https://www.binss.me/blog/notes-of-802.11-protocal/" target="_blank" rel="noopener">802.11学习笔记</a></li>
+<li><a href="https://blog.csdn.net/magod/article/details/6574686" target="_blank" rel="noopener">WEP详解</a></li>
+<li><a href="http://www.secbox.cn/hacker/425.html" target="_blank" rel="noopener">WPA认证过程</a></li>
+<li><a href="https://blog.csdn.net/xzhang76/article/details/19812669" target="_blank" rel="noopener">802.1X的wpa认证流程——-4-way handshake过程分析</a></li>
+<li><a href="http://www.og150.com/assets/Wireless%20Pre-Shared%20Key%20Cracking%20WPA,%20WPA2.pdf" target="_blank" rel="noopener">Wireless Pre-Shared Key Cracking(WPA,WPA2)</a></li>
+<li><a href="https://blog.csdn.net/u013181216/article/details/51490044" target="_blank" rel="noopener">浅谈802.1X认证</a></li>
+<li><a href="https://blog.csdn.net/lycb_gz/article/details/17523603" target="_blank" rel="noopener">全面解析802.1x认证原理</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/Wi-Fi" target="_blank" rel="noopener">Wi-Fi</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/协议/" rel="tag"># 协议</a>
+          
+            <a href="/tags/Wifi/" rel="tag"># Wifi</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/05/UPnP协议/" rel="next" title="UPnP协议">
+                <i class="fa fa-chevron-left"></i> UPnP协议
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/05/Linux系统中实现GPT分区读取程序/" rel="prev" title="Linux系统中实现GPT分区读取程序">
+                Linux系统中实现GPT分区读取程序 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Dr</p>
+              <p class="site-description motion-element" itemprop="description">我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Wifi相关概念"><span class="nav-number">1.</span> <span class="nav-text">Wifi相关概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#WiFi"><span class="nav-number">1.1.</span> <span class="nav-text">WiFi</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Wlan"><span class="nav-number">1.2.</span> <span class="nav-text">Wlan</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#802-11系列协议"><span class="nav-number">1.3.</span> <span class="nav-text">802.11系列协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IEEE802"><span class="nav-number">1.4.</span> <span class="nav-text">IEEE802</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无线网的一些缺点"><span class="nav-number">2.</span> <span class="nav-text">无线网的一些缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Wifi相关知识"><span class="nav-number">3.</span> <span class="nav-text">Wifi相关知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#主要实体原件"><span class="nav-number">3.1.</span> <span class="nav-text">主要实体原件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#工作站-Station"><span class="nav-number">3.1.1.</span> <span class="nav-text">工作站(Station)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基站-Access-Point"><span class="nav-number">3.1.2.</span> <span class="nav-text">基站(Access Point)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#频谱"><span class="nav-number">3.1.3.</span> <span class="nav-text">频谱</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#服务集"><span class="nav-number">3.1.4.</span> <span class="nav-text">服务集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#服务集标识-Service-Set-Identifier-SSID"><span class="nav-number">3.1.5.</span> <span class="nav-text">服务集标识(Service Set Identifier,SSID)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基本服务集标识-BSSID"><span class="nav-number">3.1.6.</span> <span class="nav-text">基本服务集标识(BSSID)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#扩展服务集标识-ESSID"><span class="nav-number">3.1.7.</span> <span class="nav-text">扩展服务集标识(ESSID)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基本服务集"><span class="nav-number">3.1.8.</span> <span class="nav-text">基本服务集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#扩展服务集"><span class="nav-number">3.1.9.</span> <span class="nav-text">扩展服务集</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#802-11帧"><span class="nav-number">3.2.</span> <span class="nav-text">802.11帧</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#管理帧-Management-Frame"><span class="nav-number">3.2.1.</span> <span class="nav-text">管理帧(Management Frame)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制帧-Control-Frame"><span class="nav-number">3.2.2.</span> <span class="nav-text">控制帧(Control Frame)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据帧-Data-Frame"><span class="nav-number">3.2.3.</span> <span class="nav-text">数据帧(Data Frame)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无线的接入过程"><span class="nav-number">4.</span> <span class="nav-text">无线的接入过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#扫描阶段"><span class="nav-number">4.1.</span> <span class="nav-text">扫描阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#认证"><span class="nav-number">4.2.</span> <span class="nav-text">认证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#连接"><span class="nav-number">4.3.</span> <span class="nav-text">连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#认证与加密"><span class="nav-number">5.</span> <span class="nav-text">认证与加密</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">6.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dr</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
