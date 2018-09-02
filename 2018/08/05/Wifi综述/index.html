@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="Dr&#39;s Note">
 <meta property="og:description" content="Wi-Fi是Wi-Fi联盟制造商的商标做为产品的品牌认证，是一个创建于IEEE 802.11标准的无线局域网技术。基于两套系统的密切相关，也常有人把Wi-Fi当做IEEE 802.11标准的同义术语。“Wi-Fi”常被写成“WiFi”或“Wifi”，但是它们并没有被Wi-Fi联盟认可。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-05T05:47:57.491Z">
+<meta property="og:updated_time" content="2018-09-02T06:55:33.401Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Wifi综述">
 <meta name="twitter:description" content="Wi-Fi是Wi-Fi联盟制造商的商标做为产品的品牌认证，是一个创建于IEEE 802.11标准的无线局域网技术。基于两套系统的密切相关，也常有人把Wi-Fi当做IEEE 802.11标准的同义术语。“Wi-Fi”常被写成“WiFi”或“Wifi”，但是它们并没有被Wi-Fi联盟认可。">
@@ -351,12 +351,24 @@
                 
               
 
-              <time title="创建时间：2018-08-05 13:06:27 / 修改时间：13:47:57" itemprop="dateCreated datePublished" datetime="2018-08-05T13:06:27+08:00">2018-08-05</time>
+              <time title="创建时间：2018-08-05 13:06:27" itemprop="dateCreated datePublished" datetime="2018-08-05T13:06:27+08:00">2018-08-05</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-09-02 14:55:33" itemprop="dateModified" datetime="2018-09-02T14:55:33+08:00">2018-09-02</time>
               
             
           </span>
@@ -438,10 +450,8 @@
 <li>Authentication(wlan.fc.type_subtype==0x0B):包含认证类型(Authentication Algorithm)、认证进度(Authentication SEQ)和认证状态(status code)AP可以根据相关信息决定接收还是拒绝某个STA的加入(一般通过MAC地址进行认证,后面还有认证的环节)。在第一次连接(输入用户名密码)时未抓到该数据包)</li>
 <li>Deauthentication(wlan.fc.type_subtype==0x0C):解除认证，用来终结认证关系</li>
 <li>Association Request/Association Response(wlan.fc.type_subtype==0x00/wlan.fc.type_subtype==0x01):STA找到网络并通过认证，就会发送Association Request请求AP进行关联，AP以Association Response进行回应。</li>
-<li>Reassociation Request/Reassociation Response(wlan.fc.type_subtype==0x02/wlan.fc.type_subtype==0x03):STA远离原AP，在ESS中发现信号更强的AP时，发送该请求。<ul>
+<li>Reassociation Request/Reassociation Response(wlan.fc.type_subtype==0x02/wlan.fc.type_subtype==0x03):STA远离原AP，在ESS中发现信号更强的AP时，发送该请求。</li>
 <li>Disassociation(wlan.fc.type_subtype==0x0A):接触关联，STA向AP发送该数据帧，AP收到该请求后，释放为STA分配的资源。</li>
-</ul>
-</li>
 </ul>
 <h4 id="控制帧-Control-Frame"><a href="#控制帧-Control-Frame" class="headerlink" title="控制帧(Control Frame)"></a>控制帧(Control Frame)</h4><p> 用于竞争期间的握手通信和正向确认等，为数据帧的发送提供辅助。</p>
 <ul>
