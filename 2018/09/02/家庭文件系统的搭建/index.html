@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="大学时买的笔记本一直闲置在自己手里，最近正好想研究下Resilio Sync软件，便拿出自己的笔记本安装上该软件研究了一下。然后想到自己一直想利用树莓派打造一个家庭用的文件共享及备份系统,便对笔记本折腾了一下，算是提前进行实验一番，等到树莓派到手以后便可以直接部署设置了。以下是各个软件的使用目的及配置方法。">
+<meta name="keywords" content="家庭文件系统,Bt Sync,Resilio Sync,Samba">
+<meta property="og:type" content="article">
+<meta property="og:title" content="家庭文件系统的搭建">
+<meta property="og:url" content="http://yoursite.com/2018/09/02/家庭文件系统的搭建/index.html">
+<meta property="og:site_name" content="Dr&#39;s Note">
+<meta property="og:description" content="大学时买的笔记本一直闲置在自己手里，最近正好想研究下Resilio Sync软件，便拿出自己的笔记本安装上该软件研究了一下。然后想到自己一直想利用树莓派打造一个家庭用的文件共享及备份系统,便对笔记本折腾了一下，算是提前进行实验一番，等到树莓派到手以后便可以直接部署设置了。以下是各个软件的使用目的及配置方法。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-09-08T08:25:57.592Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="家庭文件系统的搭建">
+<meta name="twitter:description" content="大学时买的笔记本一直闲置在自己手里，最近正好想研究下Resilio Sync软件，便拿出自己的笔记本安装上该软件研究了一下。然后想到自己一直想利用树莓派打造一个家庭用的文件共享及备份系统,便对笔记本折腾了一下，算是提前进行实验一番，等到树莓派到手以后便可以直接部署设置了。以下是各个软件的使用目的及配置方法。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/02/家庭文件系统的搭建/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>家庭文件系统的搭建 | Dr's Note</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dr's Note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">I am always on the way</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/02/家庭文件系统的搭建/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dr">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dr's Note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">家庭文件系统的搭建
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-02 14:59:55" itemprop="dateCreated datePublished" datetime="2018-09-02T14:59:55+08:00">2018-09-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-09-08 16:25:57" itemprop="dateModified" datetime="2018-09-08T16:25:57+08:00">2018-09-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/瞎折腾系列/" itemprop="url" rel="index"><span itemprop="name">瞎折腾系列</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>大学时买的笔记本一直闲置在自己手里，最近正好想研究下Resilio Sync软件，便拿出自己的笔记本安装上该软件研究了一下。然后想到自己一直想利用树莓派打造一个家庭用的文件共享及备份系统,便对笔记本折腾了一下，算是提前进行实验一番，等到树莓派到手以后便可以直接部署设置了。以下是各个软件的使用目的及配置方法。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="Resilio-Sync"><a href="#Resilio-Sync" class="headerlink" title="Resilio Sync"></a>Resilio Sync</h2><p>Resilio Sync(原名”BitTorrent Sync”)是由BitTorrent公司开发的专有的<strong>对等网络数据同步</strong>工具,可在Windows、OS X、Linux、Android、IOS和FreeBSD上使用。其可在<strong>局域网</strong>、互联网上通过安全的、分布式的P2P技术在不同设备之间同步文件。<br>从上面的介绍可以看到，使用Resilio Sync可以在局域网、互联网上在不同设备之间同步文件。因此便想到借助该软件实现不同终端之间的文件备份，此时由于自己工作的笔记本是公司发的ThinkP(Win10)，由于无需实时备份文件，自己不想在上面安装Resilio Sync，便想到了使用Samba文件夹共享的方式进行文件共享。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><ol>
+<li>根据自己的服务器操作系统从<a href="https://www.resilio.com/" target="_blank" rel="noopener">官网</a>对应的软件。由于我的是Linux系统，所以自己就只说明下Linux中的配置。从官网中下载下来的是一个tar.gz文件，解压之后会有一个名为rslsync可执行文件，无需编译。(Resilio Sync 2.6.0)</li>
+<li>解压之后，运行<code>./rslsync --dump-sample-config &gt; sync.conf</code>命令，将配置样例输出到sync.conf文件当中</li>
+</ol>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>本文只会记录需要的基本配置，其余的自行探索(Resilio Rsync大部分设置均可通过WEB-UI的方式进行更改)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&quot;device_name&quot;: &quot;Data Center&quot;,</span><br><span class="line">&quot;listening_port&quot; : 9999, // 配置程序监听的端口，该端口不是webui的监听端口，因此可不必特意设置</span><br><span class="line">&quot;storage_path&quot; : &quot;/home/rslsync/.sync&quot;,</span><br><span class="line"></span><br><span class="line"> &quot;webui&quot; :</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;listen&quot; : &quot;0.0.0.0:8888&quot; // 监听端口，默认是127.0.0.1,如果是在远程部署的话，建议监听0.0.0.0或VPS的端口地址,不然无法访问WEB-UI，便无法管理系统。</span><br><span class="line"></span><br><span class="line">/* preset credentials. Use password or password_hash */</span><br><span class="line">  ,&quot;login&quot; : &quot;admin&quot;</span><br><span class="line">//  ,&quot;password&quot; : &quot;password&quot; // (not recommended, better use &apos;password_hash_unified&apos;)</span><br><span class="line">// ,&quot;password_hash&quot; : &quot;&lt;crypt() 3 format password hash&gt;&quot; // (not recommended) Works on *nix only!</span><br><span class="line">// Use either &apos;password_hash&apos; or &apos;password_hash_unified&apos; (recommended), but not both of them!</span><br><span class="line">  ,&quot;password_hash_unified&quot; : &quot;4ADCA2D9F8************************************DDC53EE94182228587&quot; // 16进制的SHA256字符串，配置后不要忘记重启一次。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><ol>
+<li>使用<code>./rslsync --config sync.conf</code>命令运行Resilio Rsync软件</li>
+<li>在浏览器中输入WEB-UI监听的地址与端口，然后在认证窗口中输入用户名和密码(生成sha256的字符串)</li>
+<li>通过输入密钥或链接的方式，同步多个设备之间的文件(IOS系统只能同步照片,电子书等文件则需要挨个通过客户端打开的方式进行同步…….)<br><em>注意，国内对该软件做了屏蔽，因此需要翻墙下载，国内有一款微力同步的软件可以使用,同时还有Syncthing软件实现局域网的同步,由于精力等原因，自己未对这两个软件做测试，大家可根据自己的需求自行搜索下载进行测试</em></li>
+</ol>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ol>
+<li>Resilio Sync是单向同步软件，不可以双向的同步文件(Resilio Sync本来就是为了在网络中共享文件的，而不是专门的双向同步软件)</li>
+</ol>
+<h2 id="Samba"><a href="#Samba" class="headerlink" title="Samba"></a>Samba</h2><p>Samba用来让UNIX系统的操作系统与微软Windows操作系统的SMB/CIFS(Server Message Block/Common Internet File System)网络协议做链接的自由软件。<br>前面已经说过了，由于我的主力电脑是公司发的ThinkPad，自己需要每天背着往返于公司、客户之间,因此不想安装一些乱七八糟的软件。有时需要与自己的备份系统之间传输一些文件，故采取了共享文件夹的方式。</p>
+<h3 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h3><p>使用的debian系统，配置中科大的软件镜像源，因此直接采用apt的方式安装。<br>安装命令:<code>apt-get install samba samba-common-bin</code></p>
+<h3 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h3><h4 id="服务配置"><a href="#服务配置" class="headerlink" title="服务配置"></a>服务配置</h4><p>Samba服务器配置主要分为global、homes、printers、sharefiles四种配置,其中global:系统的全局配置,影响整个软件的运行；homes表示为每个samba用户定义其是否能够通过samba服务访问自己的家目录；printers定义打印服务；sharefiles自定义共享的文件系统。本次试验中主要讲解一下global与sharefiles的基本配置。</p>
+<ol>
+<li>global配置<br>全局配置，在该选项中配置软件基本运行的参数。主要的配置参数如下:</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># 配置Samba Server要加入的工作组或域，需要与Windows中的配置一致。</span><br><span class="line">workgroup = WORKGROUP </span><br><span class="line"># 设置Samba Serve监听的网卡或IP地址，可以写网卡名，也可以写该网卡的IP地址</span><br><span class="line">interfaces = 192.168.0.121/24 wlan0</span><br><span class="line"># 设置Samba Server 的NetBIOS名称。如果不填写，默认使用该服务器DNS名称的第一部分</span><br><span class="line">netbios name = DATACENTER</span><br><span class="line"># 设置用户访问Samba Server的验证方式，有五种验证方式:</span><br><span class="line">##share:表示匿名登录,在Samba 4中已经被弃用，可以利用security=user map to guest = Bad User 来代替</span><br><span class="line">##user:表示系统账户要先添加进samba库然后编程samba用户，使用samba用户来登录。Samba Server共享目录只能被授权的用户访问，由Samba Server负责检查账号和密码的正确性。</span><br><span class="line">##server: 由另一台samba服务器来对用户进行身份验证。</span><br><span class="line">##domain: 将samba服务器加入到域中，由域控制器进行身份认证。</span><br><span class="line">##ADS: 将samba集成到活动目录中(samba3.0中新增的功能)</span><br><span class="line">security = user</span><br><span class="line"># passdb backend 用户后台，目前有三种后台</span><br><span class="line">## smbpasswd: 使用smb自己的工具smbpasswd来给系统用户设置一个Samba密码，客户端使用该密码来访问Samba的资源。smbpasswd文件默认在/etc/samba目录下</span><br><span class="line">## tdbsam:使用数据库文件来建立用户数据库，数据库文件名称为pasdb.tdb，默认在/etc/samba目录下。passdb.tdb用户数据库可以使用smbpasswd -a 来建立Samba用户，不过要建立的Samba用户**必须是系统用户**。也可以使用pdbedit命令建立Samba账户。</span><br><span class="line">## ldapsam：基于LDAP的账户管理方式来**验证用户**。首先建立LDAP服务，设置&quot;passdb backend = ldapsam:ldap://LDAP Server&quot;</span><br><span class="line">passdb backend = tdbsam</span><br><span class="line"># 是否将认证加密,(现在Windows都是使用加密密码，因此一般需要开启此项,默认开启)</span><br><span class="line">encrypt passwords = yes/no</span><br><span class="line"># 设置guest用户名</span><br><span class="line">guest account = nobody</span><br><span class="line"># 将所有认证失败的用户都认证为guest，如果的文件夹配置为guest ok = yes，则认证失败的用户也可访问该文件夹</span><br><span class="line">map to guest = Bad User</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>sharefiles配置<br>共享部分的配置，用于为每个共享的文件夹进行配置。也可以在共享部分中设置全局配置，默认共享设置的优先级高于全局配置。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># 共享文件夹名称</span><br><span class="line">[share file name]</span><br><span class="line"># 共享文件的路径</span><br><span class="line">path = /home/</span><br><span class="line"># 是否公开，及能否再网上邻居看到该共享</span><br><span class="line">browseable = yes</span><br><span class="line"># 是否可写</span><br><span class="line">writable = yes </span><br><span class="line"># 是否拒绝匿名访问</span><br><span class="line">guest ok = no</span><br><span class="line"># 指定哪些用户可以访问，如果不指定则所有用户都可以访问</span><br><span class="line">valid users = user1 user2 user3 </span><br><span class="line"># 指定哪些用户不可以访问</span><br><span class="line">invalid users = user1 user2</span><br><span class="line"># 客户端上传文件的默认权限</span><br><span class="line">create mask = 0775</span><br><span class="line"># 客户端创建目录的默认权限</span><br><span class="line">directory mask = 0775</span><br><span class="line"># 设置客队文件进行写操作的用户</span><br><span class="line">write list = user1 user2 user3</span><br><span class="line"># 设置共享目录的管理员,可以通过@groupname的形式引用系统的用户组</span><br><span class="line">admin users = user1(@group)</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>引用配置文件</li>
+</ol>
+<ul>
+<li>第一种</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">  config file = /etc/samba/$U.smb.conf</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第二种</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">  include = /etc/samba/%U.smb.conf</span><br></pre></td></tr></table></figure>
+<p>区别：使用config file时，当以kevin的身份访问Samba服务器时，只能看到Kevin，其它在smb.conf中定义的共享资源都无法看到<br>使用include时，当以Kevin的身份访问Samba服务器时，除了可以看到Kevin，其它在smb.conf中定义的资源也可以看到</p>
+<ol start="4">
+<li>默认变量</li>
+</ol>
+<ul>
+<li>%U: 当前连接的用户名</li>
+<li>%u: 当前服务的用户名</li>
+<li>%g: 当前用户的用户组</li>
+<li>%G: 当前连接用户的用户组</li>
+</ul>
+<h4 id="其它设置"><a href="#其它设置" class="headerlink" title="其它设置"></a>其它设置</h4><ul>
+<li>检测配置文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">testparm smb.conf</span><br></pre></td></tr></table></figure>
+<ul>
+<li>添加用户<br>samba账号必须要存在于Linux系统中(/etc/passwd),但其密码却是单独维护的。创建samba用户数据需要使用pdbedit,<strong>pdbedit命令用于管理smb服务的账号信息</strong></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pdbedit -a username</span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改密码 </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">smbpasswd username</span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><a href="https://zh.wikipedia.org/wiki/Resilio_Sync" target="_blank" rel="noopener">维基百科–Resilio Sync</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/Samba" target="_blank" rel="noopener">维基百科–Samba</a></li>
+<li><a href="https://blog.csdn.net/qq_33448670/article/details/79780677" target="_blank" rel="noopener">samba全局配置含义解释</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/家庭文件系统/" rel="tag"># 家庭文件系统</a>
+          
+            <a href="/tags/Bt-Sync/" rel="tag"># Bt Sync</a>
+          
+            <a href="/tags/Resilio-Sync/" rel="tag"># Resilio Sync</a>
+          
+            <a href="/tags/Samba/" rel="tag"># Samba</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/05/博客历史小记/" rel="next" title="博客历史小记">
+                <i class="fa fa-chevron-left"></i> 博客历史小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/08/GoAgent配置PHP实现代理/" rel="prev" title="GoAgent配置PHP实现代理">
+                GoAgent配置PHP实现代理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Dr</p>
+              <p class="site-description motion-element" itemprop="description">我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/0x4472" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:ox4472@qq.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Resilio-Sync"><span class="nav-number">1.</span> <span class="nav-text">Resilio Sync</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">1.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">1.2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行"><span class="nav-number">1.3.</span> <span class="nav-text">运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题"><span class="nav-number">1.4.</span> <span class="nav-text">问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Samba"><span class="nav-number">2.</span> <span class="nav-text">Samba</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-1"><span class="nav-number">2.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置-1"><span class="nav-number">2.2.</span> <span class="nav-text">配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#服务配置"><span class="nav-number">2.2.1.</span> <span class="nav-text">服务配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其它设置"><span class="nav-number">2.2.2.</span> <span class="nav-text">其它设置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">3.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dr</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
