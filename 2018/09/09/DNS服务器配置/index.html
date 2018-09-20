@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="DNS域传送漏洞早有耳闻，但在实际的场景中没有碰到过，也不知道如何寻找该漏洞,以及该漏洞产生的原因及修复方法。因此就该漏洞特搭建一个DNS服务器以学习该漏洞出现的原因，修复方法及寻找方式，顺便学习下DNS服务器的搭建及配置。">
+<meta name="keywords" content="基础服务,DNSMasq,Bind">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DNS服务器配置">
+<meta property="og:url" content="http://yoursite.com/2018/09/09/DNS服务器配置/index.html">
+<meta property="og:site_name" content="Dr&#39;s Note">
+<meta property="og:description" content="DNS域传送漏洞早有耳闻，但在实际的场景中没有碰到过，也不知道如何寻找该漏洞,以及该漏洞产生的原因及修复方法。因此就该漏洞特搭建一个DNS服务器以学习该漏洞出现的原因，修复方法及寻找方式，顺便学习下DNS服务器的搭建及配置。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-09-20T14:39:07.132Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DNS服务器配置">
+<meta name="twitter:description" content="DNS域传送漏洞早有耳闻，但在实际的场景中没有碰到过，也不知道如何寻找该漏洞,以及该漏洞产生的原因及修复方法。因此就该漏洞特搭建一个DNS服务器以学习该漏洞出现的原因，修复方法及寻找方式，顺便学习下DNS服务器的搭建及配置。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/09/DNS服务器配置/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>DNS服务器配置 | Dr's Note</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dr's Note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">I am always on the way</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/09/DNS服务器配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dr">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dr's Note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DNS服务器配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-09 10:23:46" itemprop="dateCreated datePublished" datetime="2018-09-09T10:23:46+08:00">2018-09-09</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-09-20 22:39:07" itemprop="dateModified" datetime="2018-09-20T22:39:07+08:00">2018-09-20</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/基础服务配置/" itemprop="url" rel="index"><span itemprop="name">基础服务配置</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>DNS域传送漏洞早有耳闻，但在实际的场景中没有碰到过，也不知道如何寻找该漏洞,以及该漏洞产生的原因及修复方法。因此就该漏洞特搭建一个DNS服务器以学习该漏洞出现的原因，修复方法及寻找方式，顺便学习下DNS服务器的搭建及配置。</p>
+</blockquote>
+<a id="more"></a>
+<p>Linux中常用的有两个DNS服务器软件，一个是Bind,另一个就是DNSMasq。Window Server在安装DC时需要创建DNS服务器，具体如何使用请大家自行百度，本文不会设置Windows中DNS服务器的配置。<br>Bind与DNSMasq是linux系统下的两个比较主流的DNS服务管理软件。其中DNSmasq与Bind相比比较轻量，适合小型的局域网中使用,Bind比较适合大型公司中DNS服务器的搭建，其配置相对比较复杂，但是功能强大。</p>
+<h2 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h2><ul>
+<li>Kali-Rolling</li>
+<li>DNSMasq 2.77<h2 id="DNS相关知识"><a href="#DNS相关知识" class="headerlink" title="DNS相关知识"></a>DNS相关知识</h2>DNS主要负责将域名解析成IP地址，也能够将IP地址解析成主机名。</li>
+</ul>
+<h3 id="DNS中的域"><a href="#DNS中的域" class="headerlink" title="DNS中的域"></a>DNS中的域</h3><p>在DNS中是分域的，一个完整的域名域名查询需要查询不同的域,如<code>www.baidu.com</code>。需要查询”.”域(根域)，然后根域的DNS服务器返回com域的地址，之后com域的DNS服务器返回baidu.com域的DNS地址。最后baidu.com域的DNS服务器返回<code>www.baidu.com</code>主机的地址。可以看到一个域就是地址范围。</p>
+<h3 id="DNS的查询"><a href="#DNS的查询" class="headerlink" title="DNS的查询"></a>DNS的查询</h3><p>DNS主要利用域名查找主机名，但是DNS服务器是分层级的。上层的DNS会知道下层DNS服务器，但是不会知道下下层的DNS。因此在进行DNS查询时有两种方式，一种是递归式，一种是迭代式。</p>
+<h4 id="递归式查询"><a href="#递归式查询" class="headerlink" title="递归式查询"></a>递归式查询</h4><p>递归式查询是指DNS服务器负责帮忙进行查询，即当该DNS服务器收到DNS查询请求后，会帮忙向其它DNS服务器查询该请求，当接受到响应之后，再j将响应返回给查询者。比较适合端的查询，有点类似于代理。</p>
+<h4 id="迭代式查询"><a href="#迭代式查询" class="headerlink" title="迭代式查询"></a>迭代式查询</h4><p>迭代式查询除了能够明确知道主机名之外，不会负责帮忙查询，只会讲其知道的域的地址返回给查询者，然后让查询者自己去进行查询。比较适合做骨干节点的DNS服务器。</p>
+<h2 id="DNSMasq"><a href="#DNSMasq" class="headerlink" title="DNSMasq"></a>DNSMasq</h2><p>DNSMasq是一款轻量级的DHCP和DNS缓存服务器。根据不同的配置，其既可以实现DNS服务器的功能，也可以实现DHCP的功能</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>直接使用<code>apt-get install dnsmasq</code>部署安装。</p>
+<h3 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h3><p>DNSMasq在进行DNS查询时解析的顺序为先解析/etc/hosts文件，然后解析dnsmasq.d目录下的配置文件，最后才解析dnsmasq.conf文件。且hosts文件和dnsmasq.d目录中的文件会覆盖掉dnsmasq.conf文件中的配置。通过dnsmasq.conf文件中的配置也可以对DNSMasq精确控制DNS的解析。<br>关于DNSMasq配置网上有大量的文章可以参考，本文主要从当中找到几个比较主要的配置进行讲解<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"># 定义DNSMasq从哪里获取上游DNS服务器的地址，默认是从/etc/resolv.conf中获取(该文件默认只能配置3个nameserver,可以通过指定resolv-file的形式绕过该限制)。</span><br><span class="line">resolv-file=</span><br><span class="line"># 不读取resolv-file来确定上游文件服务器的路径</span><br><span class="line">no-resolv</span><br><span class="line"># 严格按照resolv-file中指定的nameserver顺序进行域名解析</span><br><span class="line">stric-order</span><br><span class="line"># 不加载本地的/etc/hosts</span><br><span class="line">no-hosts</span><br><span class="line"># 读取额外的hosts文件路径，可以多次指定。如果是目录，则读取目录中的文件</span><br><span class="line">addn-hosts=</span><br><span class="line"># 记录DNS查询日志,如果指定log-quries=extra，那么在每行的开始处都有额外的信息</span><br><span class="line">log-quries</span><br><span class="line"># 设置日志记录器，即日志记录的位置。默认为：Daemon，&apos;-&apos; 为stdout </span><br><span class="line">log-facility=facility or file_path</span><br><span class="line"># 如果反向查找的是私有地址如192.168.x.x，。则仅从hosts文件查找，不再转发到上游服务器</span><br><span class="line">bogus-priv</span><br><span class="line"># 对于任何解析到该IP的域名，将响应NXDOMAIN使其解析失效,可以多次指定(用来防止无效域名被劫持到广告页面)</span><br><span class="line">bogus-nxdomain=</span><br><span class="line"># 忽略指定地址的A记录查询回复，如果某个域名在上游服务器中查询的地址在ignore-address中，则忽略。</span><br><span class="line">ignore-address=&lt;ipaddr&gt;</span><br><span class="line"># 拒绝解析包含私有IP地址的域名(防止DNS劫持攻击？)</span><br><span class="line">stop-dns-rebind</span><br><span class="line">rebind-localhost-ok</span><br><span class="line"># 有选择的忽略域名的rebind行为</span><br><span class="line">rebind-domain-ok=&lt;url&gt;</span><br><span class="line"># 为某一域名指定查询的DNS服务器</span><br><span class="line">server=/test.com/x.x.x.x</span><br><span class="line"># 将任何域名解析成固定IP</span><br><span class="line">address=/domain/ipaddr</span><br><span class="line"># 监听的地址或接口</span><br><span class="line">listen-address=x.x.x.x</span><br></pre></td></tr></table></figure></p>
+<h3 id="设置权威DNS服务器"><a href="#设置权威DNS服务器" class="headerlink" title="设置权威DNS服务器"></a>设置权威DNS服务器</h3><p>DNSMasq也可以作为权威服务器使用。在配置权威服务器时需要借助外部的DNS服务器。</p>
+<ol>
+<li><p>开启DNSmasq作为权威服务器的配置<br>编辑<code>/etc/dnsmasq.conf</code>文件,添加如下两行:<br>interface是DNSMasq服务器监听的网络接口，该接口需要有一个公网IP地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 开启DNSMasq作为权威服务器的功能，配置其域名与接口</span><br><span class="line">auth-server=our.domain.com,interface</span><br><span class="line"># 配置DNSMasq作为权威服务器响应的DNS域</span><br><span class="line">auth-zone=our.domain.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置外部DNS服务器指向该服务器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">our.domain.com A xx.xx.xx.xx</span><br><span class="line">our.domain.com NS our.domain.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>开启域传送<br>编辑<code>/etc/dnsmasq.conf</code>文件:<br><strong>可以利用auth-peer设置防止开启了域传送功能的主机向任意主机发送域名信息</strong><br><em>DNSMasq不支持作为从DNS服务器,即不支持使用DNS域传送技术从其它DNS服务器上获取DNS信息</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 开启DNS 域传送功能(根据测试该值可以为空，如果开启了该功能即使不设置auth-peer便会存在域传送漏洞)</span><br><span class="line">auth-sec-servers= </span><br><span class="line"># 配置可以进行域传送的主机IP</span><br><span class="line">auth-peer=xx.xx.xx.xx</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="Bind"><a href="#Bind" class="headerlink" title="Bind"></a>Bind</h2><p>Bind与DNSMasq相比比较重量，且其配置也比较复杂，但其胜在功能强大。</p>
+<h3 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h3><p><code>apt-get install bind9</code></p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>bind服务器的主配置文件为<code>/etc/bind/named.conf</code>，DNS服务器的程序启动时会读取该文件。<code>named.conf</code>会包含三个文件<code>/etc/bind/named.conf.options</code>、<code>/etc/bind/named.conf.local</code>、<code>/etc/bind/named.conf.default-zones</code></p>
+<h3 id="配置文件的作用"><a href="#配置文件的作用" class="headerlink" title="配置文件的作用"></a>配置文件的作用</h3><p>每个配置文件的作用没有硬性的规定，只不过是在配置中根据习惯在不同的文件中配置不同的选项。本文只设计一些比较主要的配置，详细信息可测参考参考文档2。</p>
+<h4 id="named-conf-options"><a href="#named-conf-options" class="headerlink" title="named.conf.options"></a><code>named.conf.options</code></h4><p>DNS服务器中<code>options</code>选项所在的配置文件。该配置文件中的参数会影响到DNS服务器的运行行为。该文件中的常见配置如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">options &#123;</span><br><span class="line">  forwarders &#123; // 如果该DNS服务器无法解析DNS请求，会将请求转发至转发器中配置的DNS服务器。多个地址使用分号分隔。</span><br><span class="line">    8.8.8.8;</span><br><span class="line">    &#125;;</span><br><span class="line">  forward only; // 将DNS服务器配置为仅转发服务器(递归型)。默认是forward first,即转发优先，转发失败才通过本地解析。</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure></p>
+<h4 id="named-conf-local"><a href="#named-conf-local" class="headerlink" title="named.conf.local"></a><code>named.conf.local</code></h4><p>该文件主要用于配置DNS服务器负责解析的域,域名的正向解析，反向解析都会在该文件中进行配置。该文件一般会通过包含其它文件的方式进行配置。</p>
+<ul>
+<li>正向解析配置<br><code>name.conf.local</code>文件的配置:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 定义了DNS服务器正向解析的域</span><br><span class="line">zone &quot;mediahost.cn&quot; IN&#123; // zone 后接的域表示自定义的域名，IN是internet的简称，可以省略。   </span><br><span class="line">  // 主DNS的配置</span><br><span class="line">  type master;                      // 定义该域的类型(master/slave/stub/hint/forward)中的一种</span><br><span class="line">  file &quot;/etc/bind/db.mediahost.cn&quot;; //定义该域的区域数据文件</span><br><span class="line">  // 从 DNS的配置</span><br><span class="line">  // type slave;</span><br><span class="line">  // masters &#123;xxx.xxx.xxx.xxx;&#125;;</span><br><span class="line">  // file &quot;/file/path&quot;;  可选,将区域文件数据备份至该文件当中</span><br><span class="line">  allow-transfer &#123;192.168.0.1&#125;;  // 配置允许域传送的主机</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>默认allow-transfer的值为any，即任意的主机均可从该主机上执行区域传送</strong></p>
+<p><code>db.mediahost.cn</code>文件的配置:<br>// 主要定义了域中各个域名的解析地址<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$TTL 604800 // 表示缓存时间，即查询该域中记录时肯定答案的缓存时间长度。</span><br><span class="line">$ORIGIN mediahost.cn.   // 表示定义的`$ORIGIN`的起点值为根域符号，后面可以使用`@`符号来引用该值</span><br><span class="line">@ IN SOA mediahost.cn. admin.mediahost.cn. ( // SOA记录，每个区域文件中的第一个资源记录定义行都要是SOA记录，表明该DNS为主DNS。格式为:根域 IN SOA 解析域(zone中的值) 邮件地址(&quot;@&quot;有特殊含义，利用&quot;.&quot;代替)</span><br><span class="line">  ; 这里面的配置与slave DNS服务器的数据获取相关，slave DNS根据这里面的配置获取主DNS中的数据</span><br><span class="line">  1   ; serial num  slave DNS根据该值判断主DNS中数据是否发生变化</span><br><span class="line">  3h  ; refresh time  slave DNS的刷新时间，即多久slave DNS同步一次数据</span><br><span class="line">  1h  ; retry time    slave DNS同步失败后等候的时间</span><br><span class="line">  1w  ; expire time   记录逾期时间，slave DNS更新失败后，多久后放弃</span><br><span class="line">  1h ) ; negative time slave DNS 最小默认TTL值，前面没有定义的话，以该值为准。</span><br><span class="line"></span><br><span class="line">mediahost.cn. IN NS www.mediahost.cn.     // NS记录,表明域mediahost.cn.中的DNS服务器为www.meidhost.cn.(指明域的DNS主机)</span><br><span class="line">mediahost.cn. IN NS salve.mediahost.cn.   // 从DNS服务器的NS记录</span><br><span class="line"></span><br><span class="line">www.mediahost.cn.   IN A 192.168.0.121    // A 记录，定义主机对应的IP</span><br><span class="line">slave.mediahost.cn. IN A 192.168.0.129    // 从DNS服务器对应的IP</span><br><span class="line">a.mediahost.cn.     IN A 192.168.0.123</span><br><span class="line">b.mediahost.cn.     IN A 192.168.0.124</span><br><span class="line">c.mediahost.cn.     IN A 192.168.0.125</span><br><span class="line">d.mediahost.cn.     IN A 192.168.0.126</span><br><span class="line"></span><br><span class="line">www1.mediahost.cn   IN CNAME  a.mediahost.cn  // CNAME记录，存储的是canonical name的别名。即www1.mediahost.cn是a.mediahost.cn的别名，当解析www1.mediahost.cn域名时会解析至a.mediahost.cn这个域名上。</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>反向解析配置<br>在<code>/etc/name.conf</code>中配置<code>zone *.in-addr.arpa</code>,其中<code>*</code>是点分十进制IP的反写(例如<code>127.0.0.1</code>反写后为<code>1.0.0.127</code>)，可以反写IP后的任意一段长度，长度位数不同，在区域文件中需要补全的数值就不同。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zone  &quot;0.168.192.in-addr.arpa&quot; &#123;</span><br><span class="line">    type master; </span><br><span class="line">    file &quot;/etc/bind/db.0.168.192&quot;; // 指定反向记录文件位置</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>db.0.168.192</code>文件的配置:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$TTL 1D; // 定义超时时间</span><br><span class="line"></span><br><span class="line">@ IN SOA 121 admin.mediahost.cn. (1 3h 1h 1w 1h ); // SOA(Start of Authority)记录,注意反向域名解析中也需要配置该条记录</span><br><span class="line">  IN NS www.medihost.cn. // 指定域名服务器（注意前面的空格）</span><br><span class="line"></span><br><span class="line">121 IN PTR  www.meiahost.cn. // 反向域名记录，省略了zone中的一些记录(写全会解析不出来)。</span><br><span class="line">123 IN PTR  a.meiahost.cn.</span><br><span class="line">124 IN PTR  b.meiahost.cn.</span><br><span class="line">125 IN PTR  c.meiahost.cn.</span><br><span class="line">126 IN PTR  d.meiahost.cn.</span><br></pre></td></tr></table></figure></p>
+<h2 id="域传送漏洞的查找"><a href="#域传送漏洞的查找" class="headerlink" title="域传送漏洞的查找"></a>域传送漏洞的查找</h2><p>域传送漏洞只会存在权威DNS服务器上,属于配置不当造成的一种漏洞。由上面的配置步骤可以看到，如果dnsmasq作为权威DNS服务器配置了<code>auth-sec-servers=</code>选项，Bind服务器未设置<code>allow-transfer</code>选项，均会引起域传送漏洞。</p>
+<h3 id="nslookup"><a href="#nslookup" class="headerlink" title="nslookup"></a>nslookup</h3><ol>
+<li>利用<code>nslookup</code>命令进入nslookup交互式shell</li>
+<li>利用<code>server nameserver</code>命令指定DNS服务器</li>
+<li>利用<code>ls domain</code>命令查询域传送<br><em>Kali中的nslookup未实现ls命令，而win10中的则可以</em><br>windows中的bat脚本:<code>echo ls %1 | nslookup - %2</code>,%1:表示域名；%2:表示nameserver的IP地址。</li>
+</ol>
+<h3 id="nmap"><a href="#nmap" class="headerlink" title="nmap"></a>nmap</h3><p><code>nmap --script dns-zone-transfer --script-args dns-zone-transfer.domain=domain -p XX -Pn namerserve_ip</code> </p>
+<h3 id="dig"><a href="#dig" class="headerlink" title="dig"></a>dig</h3><p><code>dig @nameserver axfr domain</code><br>@nameserer:表示域名服务器<br>axfr:表示域传送指令<br>domain:表示要查询的域名</p>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol>
+<li><a href="http://blog.51cto.com/longlei/2065967" target="_blank" rel="noopener">DNSMasq详解及配置</a></li>
+<li><a href="http://www.cnblogs.com/f-ck-need-u/p/7367503.html#auto_id_0" target="_blank" rel="noopener">DNS &amp; bind从基础到深入</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/基础服务/" rel="tag"># 基础服务</a>
+          
+            <a href="/tags/DNSMasq/" rel="tag"># DNSMasq</a>
+          
+            <a href="/tags/Bind/" rel="tag"># Bind</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/08/GoAgent配置PHP实现代理/" rel="next" title="GoAgent配置PHP实现代理">
+                <i class="fa fa-chevron-left"></i> GoAgent配置PHP实现代理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Dr</p>
+              <p class="site-description motion-element" itemprop="description">我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/0x4472" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:ox4472@qq.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境介绍"><span class="nav-number">1.</span> <span class="nav-text">环境介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS相关知识"><span class="nav-number">2.</span> <span class="nav-text">DNS相关知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS中的域"><span class="nav-number">2.1.</span> <span class="nav-text">DNS中的域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS的查询"><span class="nav-number">2.2.</span> <span class="nav-text">DNS的查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#递归式查询"><span class="nav-number">2.2.1.</span> <span class="nav-text">递归式查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#迭代式查询"><span class="nav-number">2.2.2.</span> <span class="nav-text">迭代式查询</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNSMasq"><span class="nav-number">3.</span> <span class="nav-text">DNSMasq</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">3.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本配置"><span class="nav-number">3.2.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置权威DNS服务器"><span class="nav-number">3.3.</span> <span class="nav-text">设置权威DNS服务器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bind"><span class="nav-number">4.</span> <span class="nav-text">Bind</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-1"><span class="nav-number">4.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">4.2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置文件的作用"><span class="nav-number">4.3.</span> <span class="nav-text">配置文件的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#named-conf-options"><span class="nav-number">4.3.1.</span> <span class="nav-text">named.conf.options</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#named-conf-local"><span class="nav-number">4.3.2.</span> <span class="nav-text">named.conf.local</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#域传送漏洞的查找"><span class="nav-number">5.</span> <span class="nav-text">域传送漏洞的查找</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nslookup"><span class="nav-number">5.1.</span> <span class="nav-text">nslookup</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nmap"><span class="nav-number">5.2.</span> <span class="nav-text">nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dig"><span class="nav-number">5.3.</span> <span class="nav-text">dig</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文档"><span class="nav-number">6.</span> <span class="nav-text">参考文档</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dr</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
