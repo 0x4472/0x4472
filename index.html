@@ -309,6 +309,301 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/05/git小记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dr">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dr's Note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/05/git小记/" itemprop="url">
+                  git小记
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-10-05 20:34:43 / 修改时间：20:36:39" itemprop="dateCreated datePublished" datetime="2018-10-05T20:34:43+08:00">2018-10-05</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Git-学习笔记"><a href="#Git-学习笔记" class="headerlink" title="Git 学习笔记"></a>Git 学习笔记</h2><blockquote>
+<p>Git作为现在最为流行的分布式版本控制系统，一直在学习使用。但是由于在工作中使用频率较少，且自己每次都是看完相关文章之后边不再做记录。导致无法彻底理解git中的一些实现。现在再次学习廖雪峰老师的<a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" target="_blank" rel="noopener">Git教程</a>，将其中自己可能会用到的知识点进行记录。</p>
+</blockquote>
+<p>Git是一个<strong>文本版本控制系统</strong>，对于二进制文件，其无法追踪其修改，故对于word文档类的资料，其无法做版本控制。</p>
+<h3 id="仓库"><a href="#仓库" class="headerlink" title="仓库"></a>仓库</h3><p>git中的仓库是用来存放文本代码的，有远程仓库和本地仓库两种。远程仓库使用<code>git remote</code>命令进行管理。其中在本地默认使用<code>origin</code>代替远程仓库的地址，可以使用<code>git remote -v</code>命令查看远程仓库的信息，也可以根据自己的需要为远程仓库命名。</p>
+<h4 id="本地仓库与远程仓库连接"><a href="#本地仓库与远程仓库连接" class="headerlink" title="本地仓库与远程仓库连接"></a>本地仓库与远程仓库连接</h4><p>在git中可以利用指定<code>origin</code>，或者添加远程仓库名称的方式，在本地仓库与远程仓库之间建立连接。</p>
+<ol>
+<li>添加远程仓库<br><code>git remote add RemoteRepositoryName url</code></li>
+<li>本地仓库与远程仓库建立链接。<br><code>git push -u RemoteRepositoryName master</code></li>
+</ol>
+<h3 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h3><p>Git中<code>master</code>是指向git中一个分支的指针，项目中一般将该分支作为主分支。可以使用<code>git branch</code>命令管理git中的分支。<br>由于git可以创建多个分支，在不同分支中的操作互不影响，因此需要使用另一个变量指向当前工作的分支，<code>head</code>变量正具有这样的作用。当进行提交时，<code>master</code>指向最新的提交，<code>head</code>再指向<code>master</code>。当将当前工作的分支到<code>dev</code>分支时，<code>master</code>保持不变，<code>head</code>会自动指向<code>dev</code>。</p>
+<h4 id="创建并切换分支"><a href="#创建并切换分支" class="headerlink" title="创建并切换分支"></a>创建并切换分支</h4><p><code>git checkout -b dev</code>:创建并切换到<code>dev</code>分支。或者采用<code>git branch dev</code>:创建<code>dev</code>分支；<code>git checkout dev</code>:切换到<code>dev</code>分支的步骤。</p>
+<h4 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h4><p><code>git branch -d dev</code>:删除<code>dev</code>分支。</p>
+<h4 id="合并分支"><a href="#合并分支" class="headerlink" title="合并分支"></a>合并分支</h4><p><code>git merge dev</code>:将<code>dev</code>分支合并到当前分支。</p>
+<h4 id="推送分支"><a href="#推送分支" class="headerlink" title="推送分支"></a>推送分支</h4><p><code>git push RemoteRepository LocalBranch</code>:本条命令会自动将本地的<code>LocalBranch</code>推送到远程仓库，并在远程仓库中新建一个名称为<code>LocalBranch</code>的仓库。<br>这是简略版的命令，其完全的命令为：<code>git push RemoteRepository LocalBranch:RemoteBranch</code>：含义为上传本地名称为<code>LocalBranch</code>的分支到远程仓库去，并将远程分支命名为<code>RemoteBranch</code>。基于此，乳香删除远程分支，则直接执行<code>git push RemoteRepository :RemoteBranch</code>命令即可，这样就是将一个空的本地分支推送到远程仓库的<code>RemoteBranch</code>分支，并将其清空。</p>
+<h4 id="追踪分支"><a href="#追踪分支" class="headerlink" title="追踪分支"></a>追踪分支</h4><p>利用追踪分支可以让我们通过更加简短的命令操作进行代码的推送与拉取,从而提高我们的工作效率。<br><code>git checkout -b [分支名] [远程名]/[分支名]</code>:该命令可以让我们在本地新创建一个分支的同时，指定该分支追踪的远程分支。<br><code>git branch -u [远程库/远程分支] [本地分支]</code>:在本地分支与远程分支之间建立追踪管理，其中如果本地分支是当前工作分支的话,可以省略不写。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/25/20180925思考/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dr">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dr's Note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/25/20180925思考/" itemprop="url">
+                  20180925思考
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-25 21:55:17 / 修改时间：22:04:58" itemprop="dateCreated datePublished" datetime="2018-09-25T21:55:17+08:00">2018-09-25</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>今天在微博中看到了关于《我国将前面实施预算绩效管理》的通知。点进去阅读完之后，发现自己虽然认识里面的每一个字，却仍然不如对标题的理解来的多。反思一下最近自己看的大部分指导意见，好像都看不懂，这就让我开始怀疑自己的阅读水平。<br>在一直的思考中，突然想到，指导意见之类的都是高居庙堂的人物在顶层做的设计，具体实施起来需要涉及到很多方面，这就需要根据不同的情况进行设计不同的细则。这也就是说顶层人物只要负责制订出一个大的框架即可，具体实施无需进一步指明。<br>延伸到自己，最近自己一直做的工作都是一些具体的工作，是</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/09/DNS服务器配置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1642,310 +1937,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/常见应用版本Banner修改/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dr">
-      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dr's Note">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/05/常见应用版本Banner修改/" itemprop="url">
-                  常见应用版本Banner修改
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-08-05 12:44:02" itemprop="dateCreated datePublished" datetime="2018-08-05T12:44:02+08:00">2018-08-05</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-09-08 17:46:03" itemprop="dateModified" datetime="2018-09-08T17:46:03+08:00">2018-09-08</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>最近工作中需要修改一些应用的Banner信息，便从网上找了一些资料进行修改。下面的是根据自己需要测试的一些应用,特此记录一下,以做备忘。</p>
-</blockquote>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/08/05/常见应用版本Banner修改/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-tags" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/内网中常见工具/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Dr">
-      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dr's Note">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/05/内网中常见工具/" itemprop="url">
-                  内网中常见工具
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-08-05 12:26:55 / 修改时间：12:42:52" itemprop="dateCreated datePublished" datetime="2018-08-05T12:26:55+08:00">2018-08-05</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>最近在学习一些内网渗透的知识，尤其是Windows的内网渗透，在学习这些知识时碰到了大量的工具，此次专门建立一个页面用以简单记录一下各个工具以及各个工具的作用,以便备忘，工具排名不分先后。</p>
-</blockquote>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/08/05/内网中常见工具/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1993,7 +1984,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2077,7 +2068,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">22</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
