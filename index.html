@@ -355,7 +355,7 @@
                 
               
 
-              <time title="创建时间：2018-10-23 23:27:50" itemprop="dateCreated datePublished" datetime="2018-10-23T23:27:50+08:00">2018-10-23</time>
+              <time title="创建时间：2018-10-23 23:29:05" itemprop="dateCreated datePublished" datetime="2018-10-23T23:29:05+08:00">2018-10-23</time>
             
 
             
@@ -390,29 +390,16 @@
 
       
         
-          
-            <hr>
+          <hr>
 <p>title:JavaWeb学习之Servlet、Filter和Listener<br>date:2018-10-2323:22:37<br>tags:[JavaWeb学习,Java]</p>
 <h2 id="catagories-Web学习"><a href="#catagories-Web学习" class="headerlink" title="catagories:Web学习"></a>catagories:Web学习</h2><p>Servlet(ServerApplet)，全程JavaServlet。是用<strong>Java编写</strong>的<strong>服务器端程序</strong>。Servlet运行于<strong>支持Java的应用服务器</strong>中。从实现上讲，Servlet可以相迎任何类型的请求。其中<strong>HttpServlet</strong>实现了专门用于响应HTTP请求的Servlet。提供了响应对应HTTP标准请求的doGet()、doPOST()等方法。</p>
-<p>###JSP<br>Java服务器页面(JSP)是<strong>HTTPServlet的扩展</strong>。主要是为了让程序员从复杂的HTML中解放出来，更专注于servlet本身的内容。JSP再首次被访问的时候被应用服务器转换为servlet，在以后的运行中，容器直接调用这个servlet，而<strong>不再访问JSP页面</strong>。</p>
-<p>###Tomcat<br>Tomcat是分层的，</p>
-<pre><code>|-Service  |-Connector
-</code></pre><p>Server-|-Service -|-Connector<br>       |-……       |-……<br>                  |-Container</p>
-<p>Server代表整个服务器，一个Tomcat中只有一个Server，一个Server可以有多个Service，一个Service只有一个Container，但可以有多个Connector，一个服务可以有多个连接。Connecto用于<strong>处理连接</strong>相关的事宜，并提供Socket与Request和Response的相关转换。Container用于封装和管理Servlet，以及处理Request请求。<br>在开发中常用的配置的内容是属于Connector和Container。</p>
-<p>####请求处理流程<br>请求发送至Tomcat之后，首先经过Service然后会交给Connector，<strong>Connector接收请求并将接收的请求封装为Request和Response</strong>来处理，<strong>Request和Response封装完之后再交由Container进行处理</strong>，Container处理完请求之后再返回给Connector，最后再<strong>由Connector通过Socket将处理的结果返回给客户端</strong>。</p>
-<p>####Container<br>Container负责处理由Connector传递过来的请求。在Service内部有一个Engine子容器，Engine中包含Host、Context、Wrapper三个子容器。<br>-Engine：用来管理多个站点，一个Service最多只能有一个Engine<br>-Host:代表一个站点，即虚拟主机，通过配置Host就可以添加站点<br>-Context:代表一个应用程序，对应着平时开发的一套程序，或者<strong>一个WEB-INF目录以及下面的web.xml文件</strong><br>-Wrapper:每一个Wrappper封装一个Servlet<br>Context和Host的区别是Context表示一个应用(一个站点中可以有多个应用)，Tomcat中默认配置下webapps下的每一个文件夹目录都是一个Context。</p>
-<p>###Servlet与Tomcat<br>Tomcat首先会找<code>globalWebXml</code>(全局web.xml)这个文件，接找会找<code>hostWebXml</code>(主机web.xml)，web.xml文件中的各个配置项会被解析成相应的属性保存在WebXML对象中。接下去会将WebXML对象中的属性设置到Context容器中，这里包括<strong>创建Servlet对象、filter、listener等等</strong>。</p>
-<p>####配置<br>如果要使用Servlet需要在web.xml文件中进行配置，具体配置代码示例如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;servlet&gt;</span><br><span class="line">&lt;servlet-name&gt;hello&lt;/servlet-name&gt;</span><br><span class="line">&lt;servlet-class&gt;Hello&lt;/servlet-class&gt;</span><br><span class="line">&lt;/servlet&gt;</span><br><span class="line">&lt;servlet-mapping&gt;</span><br><span class="line">&lt;servlet-name&gt;hello&lt;/servlet-name&gt;</span><br><span class="line">&lt;url-pattern&gt;/hello&lt;/url-pattern&gt;</span><br><span class="line">&lt;/servlet-mapping&gt;</span><br></pre></td></tr></table></figure></p>
-<p><strong>子类重写的doGet与doPost方法中无需调用父类的doGet或doPost方法</strong></p>
-<p>###Filter<br>Filter是指java.servlet.Filter接口。Filter是在<strong>请求一个资源或者从一个资源返回信息的时候</strong>执行过滤操作的插件。通过Filter技术，开发人员可以实现用户在访问某个目标资源之前，对访问的请求和相应进行拦截，一般常用于实现URL级别的权限访问控制、过滤敏感词汇、压缩响应信息等。实现Filter会重写三个方法:init()、doFilter()、destroy()。<br>-init<br><strong>只在过滤器第一次初始化时执行</strong>，不是每次调用过滤器都执行它。接受一个FilterConfig对象实例，FilterConfig对象实例提供对servlet环境及web.xml文件中指派的过滤器名词的访问，因此可以在该方法中将FilterConfig实例放入一个字段中以提供doFilter方法访问。<br>-doFilter<br>配置其<strong>拦截访问的web资源(url)</strong>之后，WEB服务器每次调用该web资源之前，都会调用该filter的doFilter方法。doFilter方法接受ServletRequest、ServletResponse、FilterChain三个实例对象作为参数，filter如果是一个链式的，如果想继续传递下去必须调用FilterChain实例对象的doFilter方法，最后一个Filter调用其FilterChain对象的doFilter方法时，激活servlet或页面自身。链中的任意过滤器都可以通过不调用器FilterChain的doFilter方法中断这个过程，这样的话，中断此调用过程的过滤器负责将输出提供给客户。<strong>ServletRequest在请求时经过Filter进入Servlet，当Servlet处理完毕在返回时也会经过Filter</strong>。<br>前面说到Fitler会对请求和响应都会拦截，其中调用FilterChain对象实例doFilter()方法之前的代码会在请求中执行，在doFilter()方法之后的代码会在响应中执行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(&quot;ExecuteinRequest&quot;);</span><br><span class="line">filterChain.doFilter(servletRequest,servletResponse);</span><br><span class="line">System.out.println(&quot;ExecuteinResponse&quot;);</span><br></pre></td></tr></table></figure></p>
-<p>-destroy<br>可用该方法来关闭过滤器使用的文件或数据库连接池等清除任务。</p>
-<p>####配置<br>Filter的配置与Servlet类似，同样需要在web.xml文件中进行配置。配置示例代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;filter&gt;</span><br><span class="line">&lt;filter-name&gt;test&lt;/filter-name&gt;</span><br><span class="line">&lt;filter-class&gt;com.javalearn.filter.FilterTest&lt;/filter-class&gt;</span><br><span class="line">&lt;/filter&gt;</span><br><span class="line">&lt;filter-mapping&gt;</span><br><span class="line">&lt;filter-name&gt;test&lt;/filter-name&gt;</span><br><span class="line">&lt;servlet-name&gt;hello&lt;/servlet-name&gt;</span><br><span class="line">&lt;/filter-mapping&gt;</span><br></pre></td></tr></table></figure></p>
-<p>###Listener<br>监听器是负责对某一事件做出响应的应用程序。JavaWeb中的监听器主要用于监听三个域对象：ServletContext、HttpSession和ServletRequest。他能够监听三个<strong>域对象的创建与销毁</strong>，也能监听三个<strong>域对象的属性(Attribute)的增加和删除</strong>，还能监听绑定到HttpSession域中的某个对象的状态。</p>
-<p>####域对象的生命周期<br>-ServletContext<br>服务器启动时创建，针对每一个Web应用创建ServletContext,,服务器关闭前销毁。ServletContextListener接口用于监听该与对象的创建与销毁，可以通过实现该接口来加载一个应用的全局配置文件。<br>-HttpSession<br>浏览器访问服务器时，服务器会为每个浏览器创建不同的session对象，服务器创建session。如果用户的session在30min中内没有使用，则session过期。HttpSessionListener接口用于监听该实例对象的创建与销毁。<br>-ServletRequest<br>用户每访问一次，创建一个request，当前访问结束时，request对象就会销毁。ServletRequestListener负责实现对该域对象的监听。</p>
-<p>####配置示例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;listener&gt;</span><br><span class="line">&lt;listener-class&gt;com.javalearn.com.javalearn.listener.MyContextListener&lt;/listener-class&gt;</span><br><span class="line">&lt;/listener&gt;</span><br></pre></td></tr></table></figure></p>
-<p>###参考<br>1.<a href="https://zh.wikipedia.org/wiki/Java_Servlet" target="_blank" rel="noopener">维基百科-JavaServlet</a><br>2.<a href="https://blog.csdn.net/xlgen157387/article/details/79006434" target="_blank" rel="noopener">四张图带你了解Tomcat系统架构–让面试官颤抖的Tomcat回答系列！</a><br>3.<a href="http://www.51gjie.com/javaweb/867.html" target="_blank" rel="noopener">Java中ServletFilter拦截器详解</a></p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/10/23/JavaWeb学习之Servlet、Filter和Listener/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -510,12 +497,24 @@
                 
               
 
-              <time title="创建时间：2018-10-05 20:34:43 / 修改时间：20:36:39" itemprop="dateCreated datePublished" datetime="2018-10-05T20:34:43+08:00">2018-10-05</time>
+              <time title="创建时间：2018-10-05 20:34:43" itemprop="dateCreated datePublished" datetime="2018-10-05T20:34:43+08:00">2018-10-05</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-10-23 23:29:29" itemprop="dateModified" datetime="2018-10-23T23:29:29+08:00">2018-10-23</time>
               
             
           </span>
@@ -549,25 +548,16 @@
 
       
         
-          
-            <h2 id="Git-学习笔记"><a href="#Git-学习笔记" class="headerlink" title="Git 学习笔记"></a>Git 学习笔记</h2><blockquote>
+          <h2 id="Git-学习笔记"><a href="#Git-学习笔记" class="headerlink" title="Git 学习笔记"></a>Git 学习笔记</h2><blockquote>
 <p>Git作为现在最为流行的分布式版本控制系统，一直在学习使用。但是由于在工作中使用频率较少，且自己每次都是看完相关文章之后边不再做记录。导致无法彻底理解git中的一些实现。现在再次学习廖雪峰老师的<a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" target="_blank" rel="noopener">Git教程</a>，将其中自己可能会用到的知识点进行记录。</p>
 </blockquote>
-<p>Git是一个<strong>文本版本控制系统</strong>，对于二进制文件，其无法追踪其修改，故对于word文档类的资料，其无法做版本控制。</p>
-<h3 id="仓库"><a href="#仓库" class="headerlink" title="仓库"></a>仓库</h3><p>git中的仓库是用来存放文本代码的，有远程仓库和本地仓库两种。远程仓库使用<code>git remote</code>命令进行管理。其中在本地默认使用<code>origin</code>代替远程仓库的地址，可以使用<code>git remote -v</code>命令查看远程仓库的信息，也可以根据自己的需要为远程仓库命名。</p>
-<h4 id="本地仓库与远程仓库连接"><a href="#本地仓库与远程仓库连接" class="headerlink" title="本地仓库与远程仓库连接"></a>本地仓库与远程仓库连接</h4><p>在git中可以利用指定<code>origin</code>，或者添加远程仓库名称的方式，在本地仓库与远程仓库之间建立连接。</p>
-<ol>
-<li>添加远程仓库<br><code>git remote add RemoteRepositoryName url</code></li>
-<li>本地仓库与远程仓库建立链接。<br><code>git push -u RemoteRepositoryName master</code></li>
-</ol>
-<h3 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h3><p>Git中<code>master</code>是指向git中一个分支的指针，项目中一般将该分支作为主分支。可以使用<code>git branch</code>命令管理git中的分支。<br>由于git可以创建多个分支，在不同分支中的操作互不影响，因此需要使用另一个变量指向当前工作的分支，<code>head</code>变量正具有这样的作用。当进行提交时，<code>master</code>指向最新的提交，<code>head</code>再指向<code>master</code>。当将当前工作的分支到<code>dev</code>分支时，<code>master</code>保持不变，<code>head</code>会自动指向<code>dev</code>。</p>
-<h4 id="创建并切换分支"><a href="#创建并切换分支" class="headerlink" title="创建并切换分支"></a>创建并切换分支</h4><p><code>git checkout -b dev</code>:创建并切换到<code>dev</code>分支。或者采用<code>git branch dev</code>:创建<code>dev</code>分支；<code>git checkout dev</code>:切换到<code>dev</code>分支的步骤。</p>
-<h4 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h4><p><code>git branch -d dev</code>:删除<code>dev</code>分支。</p>
-<h4 id="合并分支"><a href="#合并分支" class="headerlink" title="合并分支"></a>合并分支</h4><p><code>git merge dev</code>:将<code>dev</code>分支合并到当前分支。</p>
-<h4 id="推送分支"><a href="#推送分支" class="headerlink" title="推送分支"></a>推送分支</h4><p><code>git push RemoteRepository LocalBranch</code>:本条命令会自动将本地的<code>LocalBranch</code>推送到远程仓库，并在远程仓库中新建一个名称为<code>LocalBranch</code>的仓库。<br>这是简略版的命令，其完全的命令为：<code>git push RemoteRepository LocalBranch:RemoteBranch</code>：含义为上传本地名称为<code>LocalBranch</code>的分支到远程仓库去，并将远程分支命名为<code>RemoteBranch</code>。基于此，乳香删除远程分支，则直接执行<code>git push RemoteRepository :RemoteBranch</code>命令即可，这样就是将一个空的本地分支推送到远程仓库的<code>RemoteBranch</code>分支，并将其清空。</p>
-<h4 id="追踪分支"><a href="#追踪分支" class="headerlink" title="追踪分支"></a>追踪分支</h4><p>利用追踪分支可以让我们通过更加简短的命令操作进行代码的推送与拉取,从而提高我们的工作效率。<br><code>git checkout -b [分支名] [远程名]/[分支名]</code>:该命令可以让我们在本地新创建一个分支的同时，指定该分支追踪的远程分支。<br><code>git branch -u [远程库/远程分支] [本地分支]</code>:在本地分支与远程分支之间建立追踪管理，其中如果本地分支是当前工作分支的话,可以省略不写。</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/10/05/git小记/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
