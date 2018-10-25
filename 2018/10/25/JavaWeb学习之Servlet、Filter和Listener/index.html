@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="Dr&#39;s Note">
 <meta property="og:description" content="Servlet(ServerApplet)，全程JavaServlet。是用Java编写的服务器端程序。Servlet运行于支持Java的应用服务器中。从实现上讲，Servlet可以相迎任何类型的请求。其中HttpServlet实现了专门用于响应HTTP请求的Servlet。提供了响应对应HTTP标准请求的doGet()、doPOST()等方法。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-10-25T13:03:11.176Z">
+<meta property="og:updated_time" content="2018-10-25T13:05:47.188Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaWeb学习之Servlet、Filter和Listener">
 <meta name="twitter:description" content="Servlet(ServerApplet)，全程JavaServlet。是用Java编写的服务器端程序。Servlet运行于支持Java的应用服务器中。从实现上讲，Servlet可以相迎任何类型的请求。其中HttpServlet实现了专门用于响应HTTP请求的Servlet。提供了响应对应HTTP标准请求的doGet()、doPOST()等方法。">
@@ -351,7 +351,7 @@
                 
               
 
-              <time title="创建时间：2018-10-25 21:03:11" itemprop="dateCreated datePublished" datetime="2018-10-25T21:03:11+08:00">2018-10-25</time>
+              <time title="创建时间：2018-10-25 21:05:47" itemprop="dateCreated datePublished" datetime="2018-10-25T21:05:47+08:00">2018-10-25</time>
             
 
             
@@ -430,8 +430,7 @@
 </ul>
 <h4 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h4><p>Filter的配置与Servlet类似，同样需要在web.xml文件中进行配置。配置示例代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;filter&gt;</span><br><span class="line">  &lt;filter-name&gt;test&lt;/filter-name&gt;</span><br><span class="line">  &lt;filter-class&gt;com.javalearn.filter.FilterTest&lt;/filter-class&gt;</span><br><span class="line">&lt;/filter&gt;</span><br><span class="line">&lt;filter-mapping&gt;</span><br><span class="line">  &lt;filter-name&gt;test&lt;/filter-name&gt;</span><br><span class="line">  &lt;servlet-name&gt;hello&lt;/servlet-name&gt;</span><br><span class="line">&lt;/filter-mapping&gt;</span><br></pre></td></tr></table></figure></p>
 <h3 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h3><p>监听器是负责对某一事件做出响应的应用程序。JavaWeb中的监听器主要用于监听三个域对象：ServletContext、HttpSession和ServletRequest。他能够监听三个<strong>域对象的创建与销毁</strong>，也能监听三个<strong>域对象的属性(Attribute)的增加和删除</strong>，还能监听绑定到HttpSession域中的某个对象的状态。</p>
-<p>####域对象的生命周期</p>
-<ul>
+<h4 id="域对象的生命周期"><a href="#域对象的生命周期" class="headerlink" title="域对象的生命周期"></a>域对象的生命周期</h4><ul>
 <li>ServletContext<br>服务器启动时创建，针对每一个Web应用创建ServletContext,,服务器关闭前销毁。ServletContextListener接口用于监听该与对象的创建与销毁，可以通过实现该接口来加载一个应用的全局配置文件。</li>
 <li>HttpSession<br>浏览器访问服务器时，服务器会为每个浏览器创建不同的session对象，服务器创建session。如果用户的session在30min中内没有使用，则session过期。HttpSessionListener接口用于监听该实例对象的创建与销毁。</li>
 <li>ServletRequest<br>用户每访问一次，创建一个request，当前访问结束时，request对象就会销毁。ServletRequestListener负责实现对该域对象的监听。<h4 id="配置示例"><a href="#配置示例" class="headerlink" title="配置示例"></a>配置示例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;listener&gt;</span><br><span class="line">  &lt;listener-class&gt;</span><br><span class="line">    com.javalearn.com.javalearn.listener.MyContextListener</span><br><span class="line">  &lt;/listener-class&gt;</span><br><span class="line">&lt;/listener&gt;</span><br></pre></td></tr></table></figure>
@@ -700,7 +699,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP"><span class="nav-number">1.</span> <span class="nav-text">JSP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tomcat"><span class="nav-number">2.</span> <span class="nav-text">Tomcat</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#请求处理流程"><span class="nav-number">2.1.</span> <span class="nav-text">请求处理流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Container"><span class="nav-number">2.2.</span> <span class="nav-text">Container</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet与Tomcat"><span class="nav-number">3.</span> <span class="nav-text">Servlet与Tomcat</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置"><span class="nav-number">3.1.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Filter"><span class="nav-number">4.</span> <span class="nav-text">Filter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置-1"><span class="nav-number">4.1.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Listener"><span class="nav-number">5.</span> <span class="nav-text">Listener</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置示例"><span class="nav-number">5.1.</span> <span class="nav-text">配置示例</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP"><span class="nav-number">1.</span> <span class="nav-text">JSP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tomcat"><span class="nav-number">2.</span> <span class="nav-text">Tomcat</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#请求处理流程"><span class="nav-number">2.1.</span> <span class="nav-text">请求处理流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Container"><span class="nav-number">2.2.</span> <span class="nav-text">Container</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet与Tomcat"><span class="nav-number">3.</span> <span class="nav-text">Servlet与Tomcat</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置"><span class="nav-number">3.1.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Filter"><span class="nav-number">4.</span> <span class="nav-text">Filter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置-1"><span class="nav-number">4.1.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Listener"><span class="nav-number">5.</span> <span class="nav-text">Listener</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#域对象的生命周期"><span class="nav-number">5.1.</span> <span class="nav-text">域对象的生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置示例"><span class="nav-number">5.2.</span> <span class="nav-text">配置示例</span></a></li></ol></li></ol></div>
             
 
           </div>
