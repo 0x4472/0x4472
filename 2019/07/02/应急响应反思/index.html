@@ -108,25 +108,25 @@
 
 
 
-  <meta name="description" content="前几天做项目时看到同事使用GoAgent做代理处理事情。便想到自己虽然知道有代理这个东西，但是对其如何配置并不是很熟悉，因此便决定研究一下常见代理软件的配置方法。">
-<meta name="keywords" content="代理转发,HTTP代理">
+  <meta name="description" content="今天又一次应急做的特别失败，这已经第二次应急特别失败的案例了。在回家的路上自己反思了一下这两次失败的一些需要反思的点，特此记录，以做警示。 现象两次应急都有一个共同点就是客户认为这个机器被攻击了，但是机器上并没有明显的痕迹，利用一些主机入侵检测软件也没有发现任何的问题。客户需要确认这个机器是否真的被攻击了。自己接入机器之后排查机器中遗留的信息，但是登录机器按照常见的思路排查一遍之后发现没有找到任何">
+<meta name="keywords" content="应急响应">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GoAgent配置PHP实现代理">
-<meta property="og:url" content="http://yoursite.com/2018/09/08/GoAgent配置PHP实现代理/index.html">
+<meta property="og:title" content="应急响应反思">
+<meta property="og:url" content="http://yoursite.com/2019/07/02/应急响应反思/index.html">
 <meta property="og:site_name" content="红猪的笔记">
-<meta property="og:description" content="前几天做项目时看到同事使用GoAgent做代理处理事情。便想到自己虽然知道有代理这个东西，但是对其如何配置并不是很熟悉，因此便决定研究一下常见代理软件的配置方法。">
+<meta property="og:description" content="今天又一次应急做的特别失败，这已经第二次应急特别失败的案例了。在回家的路上自己反思了一下这两次失败的一些需要反思的点，特此记录，以做警示。 现象两次应急都有一个共同点就是客户认为这个机器被攻击了，但是机器上并没有明显的痕迹，利用一些主机入侵检测软件也没有发现任何的问题。客户需要确认这个机器是否真的被攻击了。自己接入机器之后排查机器中遗留的信息，但是登录机器按照常见的思路排查一遍之后发现没有找到任何">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-09-08T09:43:15.000Z">
+<meta property="og:updated_time" content="2019-07-03T15:43:00.105Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="GoAgent配置PHP实现代理">
-<meta name="twitter:description" content="前几天做项目时看到同事使用GoAgent做代理处理事情。便想到自己虽然知道有代理这个东西，但是对其如何配置并不是很熟悉，因此便决定研究一下常见代理软件的配置方法。">
+<meta name="twitter:title" content="应急响应反思">
+<meta name="twitter:description" content="今天又一次应急做的特别失败，这已经第二次应急特别失败的案例了。在回家的路上自己反思了一下这两次失败的一些需要反思的点，特此记录，以做警示。 现象两次应急都有一个共同点就是客户认为这个机器被攻击了，但是机器上并没有明显的痕迹，利用一些主机入侵检测软件也没有发现任何的问题。客户需要确认这个机器是否真的被攻击了。自己接入机器之后排查机器中遗留的信息，但是登录机器按照常见的思路排查一遍之后发现没有找到任何">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/09/08/GoAgent配置PHP实现代理/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/07/02/应急响应反思/"/>
 
 
 
@@ -136,7 +136,7 @@
   };
 </script>
 
-  <title>GoAgent配置PHP实现代理 | 红猪的笔记</title>
+  <title>应急响应反思 | 红猪的笔记</title>
   
 
 
@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/08/GoAgent配置PHP实现代理/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/02/应急响应反思/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="红猪">
@@ -334,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">GoAgent配置PHP实现代理
+          <h1 class="post-title" itemprop="name headline">应急响应反思
               
             
           </h1>
@@ -359,12 +359,24 @@
                 
               
 
-              <time title="创建时间：2018-09-08 16:13:46 / 修改时间：17:43:15" itemprop="dateCreated datePublished" datetime="2018-09-08T16:13:46+08:00">2018-09-08</time>
+              <time title="创建时间：2019-07-02 21:12:24" itemprop="dateCreated datePublished" datetime="2019-07-02T21:12:24+08:00">2019-07-02</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-03 23:43:00" itemprop="dateModified" datetime="2019-07-03T23:43:00+08:00">2019-07-03</time>
               
             
           </span>
@@ -381,7 +393,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/代理软件/" itemprop="url" rel="index"><span itemprop="name">代理软件</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/安全服务/" itemprop="url" rel="index"><span itemprop="name">安全服务</span></a></span>
 
                 
                 
@@ -415,36 +427,39 @@
       
 
       
-        <blockquote>
-<p>前几天做项目时看到同事使用GoAgent做代理处理事情。便想到自己虽然知道有代理这个东西，但是对其如何配置并不是很熟悉，因此便决定研究一下常见代理软件的配置方法。</p>
-</blockquote>
-<a id="more"></a>
-<p>GoAgent是一个比较老的代理软件了，以前主要是为那些不甘寂寞的人翻墙使用。现在该项目不知道什么原因已经删库了(听说改名为<a href="https://github.com/XX-net/XX-Net" target="_blank" rel="noopener">xxnet</a>了)，现在已经没有官方的源，如果需要下载的话可以到<a href="https://github.com" target="_blank" rel="noopener">GitHub</a>自己搜索下载。本次配置的版本就是从<a href="https://github.com" target="_blank" rel="noopener">GitHub</a>下载的[3.2.3]版。<br>作为学习的第一个代理软件，本想用最多两个小时就可以配置成功，没成想却耗费了将近7个小时，网上有许多文档估计没有实践过，有些并不能直接使用。</p>
-<h2 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h2><ul>
-<li><a href="https://github.com/out0fmemory/GoAgent-Original/tree/master/goagent-orignal-newest" target="_blank" rel="noopener">GoAgent 3.2.3</a></li>
-<li>Kali </li>
-<li>PHP7.0<br><strong>PHP需要安装并开启Php-Curl,否则会报错</strong></li>
-<li>Apache2</li>
-<li>Win10</li>
-<li>FireFox</li>
-</ul>
-<h2 id="本地配置"><a href="#本地配置" class="headerlink" title="本地配置"></a>本地配置</h2><p>解压下载的GoAgent软件，里面主要有两个文件夹server和local。顾名思义，server文件夹中的文件就是需要上传至服务端，本次实验中主要用到了server文件夹中php目录下的index.php文件(relay.php文件的用法暂时未研究,后期再继续增加)。local则是在本地端需要配置及运行的文件，GooAgent的配置文件为<code>proxy.ini</code>,关于PHP代理的主要是<code>proxy.ini</code>中<code>[php]</code>后面的选项。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[php]</span><br><span class="line">enable = 1</span><br><span class="line">password = 123456</span><br><span class="line">crlf = 0</span><br><span class="line">validate = 0</span><br><span class="line">keepalive = 0</span><br><span class="line">listen = 127.0.0.1:8088</span><br><span class="line">fetchserver = http://*********/go.php</span><br><span class="line">hosts = *********</span><br></pre></td></tr></table></figure>
+        <p>今天又一次应急做的特别失败，这已经第二次应急特别失败的案例了。在回家的路上自己反思了一下这两次失败的一些需要反思的点，特此记录，以做警示。</p>
+<h3 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h3><p>两次应急都有一个共同点就是客户认为这个机器被攻击了，但是机器上并没有明显的痕迹，利用一些主机入侵检测软件也没有发现任何的问题。客户需要确认这个机器是否真的被攻击了。自己接入机器之后排查机器中遗留的信息，但是登录机器按照常见的思路排查一遍之后发现没有找到任何的蛛丝马迹,之后内心便开始产生这个机器没有问题的结论，并开始进入乱查一气的节奏。这就导致本来毫无头绪的事情变得更加毫无头绪。然后慢慢的耐心耗尽，进入磨洋工阶段，最后会给客户一个没问题的结论，然后结束排查。</p>
+<h4 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h4><p>接到一个项目应该跟客户了解清楚该项目的一个基本信息，明确客户的需求。而不是上来就蛮干瞎干,倒腾一通,结果与客户希望的事情相反，这样就会产生费力不讨好的结果。</p>
+<h4 id="客户"><a href="#客户" class="headerlink" title="客户"></a>客户</h4><p>客户因该是最了解主机环境的人(即使他不了解，应该也能找到了确认的人)，因此应该去找客户确认机器所处的基本环境。如机器所处的位置（云/IDC机房/自建机房）、网络环境(机器在网络中的位置，上下联的机器)、机器的作用(正常对外提供的服务)。通过这些信息来初步推测下受攻击的机器可能会存在的问题，找到一个排查问题的基本入手点。但是还需要记住一点<strong>客户所说的不一定是真的</strong>,在排查问题时，不应该想当然的跟着客户的思路去走，而去省略一些排查的步骤，这样在某一些情况会排查不出问题来。要相信在计算机科学中没有神话故事，只有事实。如果排查出来的事实与客户的描述有出入，那么极有可能就是客户记错了。</p>
+<h4 id="耐心，耐心，耐心"><a href="#耐心，耐心，耐心" class="headerlink" title="耐心，耐心，耐心"></a>耐心，耐心，耐心</h4><p>有时候可能会因为自身知识局限等原因导致一直排查不出结果，但是仍要耐心做好各个方面基本的信息收集，可以参考后面的信息排查章节进行信息的排查。这样即使失败了，在后面做复盘或请教他人时，能够快速的找到问题。</p>
+<h4 id="信息排查"><a href="#信息排查" class="headerlink" title="信息排查"></a>信息排查</h4><p>下面的排查需要根据主机的实际情况进行排查，排查问题时一定要仔细有耐心，并且要善用系统中自带且常见的工具。</p>
+<h5 id="命令校验"><a href="#命令校验" class="headerlink" title="命令校验"></a>命令校验</h5><p>确保系统中使用的命令是正常且未被修改过的。</p>
 <ul>
-<li>enable<br>表示启用该类型的代理，在设置时可以根据需要启用不同的代理</li>
-<li>password<br>连接代理文件时的密码，默认是123456</li>
-<li>listen<br>监听的ip与端口,在浏览器中设置代理时需要配置该IP与端口</li>
-<li>fetchserver<br>代理PHP程序文件所在的地址</li>
-<li>hosts<br>主机地址<br><strong>网上大部分的文章都没有要求配置该选项，但是本次实验中，发现该选项必须配置，不然容易出错，需要配置文代理文件所在的主机(无需加协议)</strong></li>
+<li>linux:<code>rpm -Va</code></li>
 </ul>
-<h2 id="启动GoAgent"><a href="#启动GoAgent" class="headerlink" title="启动GoAgent"></a>启动GoAgent</h2><p>Win中直接运行GoAgent.exe即可</p>
-<h2 id="服务端配置"><a href="#服务端配置" class="headerlink" title="服务端配置"></a>服务端配置</h2><p>将server目录下php文件夹中的index.php文件上传至web服务器中可以访问到的目录下。可以在浏览器中访问一下是否可以连通，访问该文件，浏览器会自动跳转访问Google。</p>
-<h2 id="浏览器配置"><a href="#浏览器配置" class="headerlink" title="浏览器配置"></a>浏览器配置</h2><p>根据需要在浏览器的中启用代理，并将代理地址配置为在<code>proxy.ini</code>文件中设置的listen地址。若同时还需要代理访问https页面，则需要将local目录下的<code>CA.crt</code>证书安装至浏览器的根证书当中。然后重启浏览器。</p>
-<h2 id="碰到的坑"><a href="#碰到的坑" class="headerlink" title="碰到的坑"></a>碰到的坑</h2><ol>
-<li>hosts 未配置。通过代码调试的方式发现问题。</li>
-<li>php_curl未安装及安装了错误的版本。通过<code>phpinfo();</code>下载正确版本的php_curl</li>
-<li>HTTPS页面无法访问。导入证书后未重启浏览器。</li>
-</ol>
+<h4 id="运行进程"><a href="#运行进程" class="headerlink" title="运行进程"></a>运行进程</h4><p>进程的版本、是否已经爆出漏洞</p>
+<h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><ul>
+<li><code>env</code></li>
+<li><code>ld.so.preload</code>:so劫持</li>
+</ul>
+<h4 id="用户登录情况"><a href="#用户登录情况" class="headerlink" title="用户登录情况"></a>用户登录情况</h4><ul>
+<li>lastlog</li>
+<li>who</li>
+<li>who /var/log/wtmp</li>
+<li>last</li>
+</ul>
+<h4 id="用户操作记录"><a href="#用户操作记录" class="headerlink" title="用户操作记录"></a>用户操作记录</h4><p><code>.bash_history</code></p>
+<h4 id="最近修改文件"><a href="#最近修改文件" class="headerlink" title="最近修改文件"></a>最近修改文件</h4><p>根据排查到遗留文件的信息查找某个时间段内被修改的文件。</p>
+<h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><ul>
+<li>stat</li>
+<li>ls</li>
+<li>find<br><code>find / -ctime -xx</code></li>
+<li>awk</li>
+<li>uniq</li>
+<li>sort</li>
+<li>grep </li>
+<li>xargs</li>
+</ul>
 
       
     </div>
@@ -465,9 +480,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/代理转发/" rel="tag"># 代理转发</a>
-          
-            <a href="/tags/HTTP代理/" rel="tag"># HTTP代理</a>
+            <a href="/tags/应急响应/" rel="tag"># 应急响应</a>
           
         </div>
       
@@ -480,8 +493,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/02/家庭文件系统的搭建/" rel="next" title="家庭文件系统的搭建">
-                <i class="fa fa-chevron-left"></i> 家庭文件系统的搭建
+              <a href="/2019/03/26/JavaWeb学习之Servlet、Filter和Listener/" rel="next" title="JavaWeb学习之Servlet、Filter和Listener">
+                <i class="fa fa-chevron-left"></i> JavaWeb学习之Servlet、Filter和Listener
               </a>
             
           </div>
@@ -489,10 +502,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/09/DNS服务器配置/" rel="prev" title="DNS服务器配置">
-                DNS服务器配置 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -722,7 +731,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境介绍"><span class="nav-number">1.</span> <span class="nav-text">环境介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地配置"><span class="nav-number">2.</span> <span class="nav-text">本地配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动GoAgent"><span class="nav-number">3.</span> <span class="nav-text">启动GoAgent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务端配置"><span class="nav-number">4.</span> <span class="nav-text">服务端配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浏览器配置"><span class="nav-number">5.</span> <span class="nav-text">浏览器配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#碰到的坑"><span class="nav-number">6.</span> <span class="nav-text">碰到的坑</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#现象"><span class="nav-number">1.</span> <span class="nav-text">现象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#项目"><span class="nav-number">1.1.</span> <span class="nav-text">项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户"><span class="nav-number">1.2.</span> <span class="nav-text">客户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#耐心，耐心，耐心"><span class="nav-number">1.3.</span> <span class="nav-text">耐心，耐心，耐心</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信息排查"><span class="nav-number">1.4.</span> <span class="nav-text">信息排查</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#命令校验"><span class="nav-number">1.4.1.</span> <span class="nav-text">命令校验</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行进程"><span class="nav-number">1.5.</span> <span class="nav-text">运行进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#环境变量"><span class="nav-number">1.6.</span> <span class="nav-text">环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用户登录情况"><span class="nav-number">1.7.</span> <span class="nav-text">用户登录情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用户操作记录"><span class="nav-number">1.8.</span> <span class="nav-text">用户操作记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最近修改文件"><span class="nav-number">1.9.</span> <span class="nav-text">最近修改文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">1.10.</span> <span class="nav-text">常用命令</span></a></li></ol></li></ol></div>
             
 
           </div>
