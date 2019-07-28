@@ -108,25 +108,25 @@
 
 
 
-  <meta name="description" content="通过LinuxGPT分区读取程序对GPT有了一个比较深入的了解,接下来再查看一下常见的DOS分区表，与其有什么不一样的地方。">
-<meta name="keywords" content="DOS,文件系统">
+  <meta name="description" content="日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。">
+<meta name="keywords" content="网络安全工具">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DOS文件系统">
-<meta property="og:url" content="http://yoursite.com/2018/08/05/DOS文件系统/index.html">
+<meta property="og:title" content="Nmap学习笔记一">
+<meta property="og:url" content="http://yoursite.com/2019/07/28/Nmap学习笔记概览/index.html">
 <meta property="og:site_name" content="红猪的笔记">
-<meta property="og:description" content="通过LinuxGPT分区读取程序对GPT有了一个比较深入的了解,接下来再查看一下常见的DOS分区表，与其有什么不一样的地方。">
+<meta property="og:description" content="日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-05T05:56:49.000Z">
+<meta property="og:updated_time" content="2019-07-28T10:38:40.108Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DOS文件系统">
-<meta name="twitter:description" content="通过LinuxGPT分区读取程序对GPT有了一个比较深入的了解,接下来再查看一下常见的DOS分区表，与其有什么不一样的地方。">
+<meta name="twitter:title" content="Nmap学习笔记一">
+<meta name="twitter:description" content="日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/08/05/DOS文件系统/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/07/28/Nmap学习笔记概览/"/>
 
 
 
@@ -136,7 +136,7 @@
   };
 </script>
 
-  <title>DOS文件系统 | 红猪的笔记</title>
+  <title>Nmap学习笔记一 | 红猪的笔记</title>
   
 
 
@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/DOS文件系统/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/28/Nmap学习笔记概览/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="红猪">
@@ -334,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">DOS文件系统
+          <h1 class="post-title" itemprop="name headline">Nmap学习笔记一
               
             
           </h1>
@@ -359,34 +359,12 @@
                 
               
 
-              <time title="创建时间：2018-08-05 13:50:00 / 修改时间：13:56:49" itemprop="dateCreated datePublished" datetime="2018-08-05T13:50:00+08:00">2018-08-05</time>
+              <time title="创建时间：2019-07-28 18:38:40" itemprop="dateCreated datePublished" datetime="2019-07-28T18:38:40+08:00">2019-07-28</time>
             
 
-            
-              
-
-              
             
           </span>
 
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算机系统/" itemprop="url" rel="index"><span itemprop="name">计算机系统</span></a></span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -416,26 +394,20 @@
 
       
         <blockquote>
-<p>通过LinuxGPT分区读取程序对GPT有了一个比较深入的了解,接下来再查看一下常见的DOS分区表，与其有什么不一样的地方。</p>
+<p>日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。<br><a id="more"></a></p>
 </blockquote>
-<a id="more"></a>
-<h2 id="DOS分区"><a href="#DOS分区" class="headerlink" title="DOS分区"></a>DOS分区</h2><p>采用MBR磁盘分区的方式进行分区的设备。在Linux中利用fdisk -l命令会在Disklable type后面显示为dos。DOS分区与GPT分区表存储的位置不一致。DOS分区表存储在第一扇区(在MBR当中)，而GPT分区表一般存储在第二扇区。</p>
-<h3 id="MBR"><a href="#MBR" class="headerlink" title="MBR"></a>MBR</h3><p>MBR(Master Boot Record)主引导记录，一般位于磁盘最开始的位置 ，即C/H/S(柱面/磁头/扇区)为0/0/0的位置,占用一个扇区512字节。由四部分组成：引导程序、磁盘签名、分区表、结束标志。</p>
-<h4 id="MBR结构"><a href="#MBR结构" class="headerlink" title="MBR结构"></a>MBR结构</h4><p>|———–|———-|———-|<br>| 引导程序 | 分区表 | 结束标志 |</p>
-<h4 id="引导程序-MBR"><a href="#引导程序-MBR" class="headerlink" title="引导程序(MBR)"></a>引导程序(MBR)</h4><p>0 ~ 1B7H: 446Byte,存储引导程序。当BIOS自检完成之后便会将硬盘第一个扇区读入内存当中，然后BIOS检查内存中最后的两个字节是否为0xaa55，不等于则尝试其它介质,等于则进入该启动程序。<br>0x00 ~ 0x1B7  : 440 : 引导程序<br>0x1B8 ~ 0x1BB : 4   ：磁盘签名<br>0x1BC ~ 0x1BD : 2   : 保留</p>
-<h4 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h4><p>下面的位置表示偏移位置，而不是所说的实际位置。<br>0x00 1Byte 引导标志,标识是否为活动分区<br>0x01 1Byte 起始磁头<br>0x02 ~ 0x03 2Byte 6bit表示起始扇区,10Bit表示起始柱面<br>0x04 1Byte 分区类型<br>0x05 1Byte 结束磁头<br>0x06 ~ 0x07 2Byte 6bit表示结束扇区,10bit表示结束柱面<br>0x08 ~ 0xA1 4Byte 本分区之前的扇区数<br>0xA2 ~ 0xA5 4Byte 本分区的总扇区数<br>在每个分区当中会根据当时格式化时的设置,格式化不同的文件系统。因此在接下来读取每个分区当中的内容时，就需要按照该分区的文件系统格式进行读取。</p>
-<h4 id="结束标志"><a href="#结束标志" class="headerlink" title="结束标志"></a>结束标志</h4><p>0x00</p>
-<h3 id="FAT32"><a href="#FAT32" class="headerlink" title="FAT32"></a>FAT32</h3><h4 id="FAT32结构"><a href="#FAT32结构" class="headerlink" title="FAT32结构"></a>FAT32结构</h4><p>|—————|———-|———-|———|<br>| DBR和保留扇区 | FAT1 | FAT2 | DATA |</p>
-<h4 id="DBR和保留扇区"><a href="#DBR和保留扇区" class="headerlink" title="DBR和保留扇区"></a>DBR和保留扇区</h4><p>DOS BOOT Record 操作系统引导记录，由五部分组成:跳转指令，OEM代码、BPB、引导程序和结束标志<br>0x00 ~ 0x02 3Byte 将程序执行流程跳转到引导程序起始处<br>0x03 ~ 0xA0 8Byte OEM代码，由格式化的厂商规定<br>0x0B ~ 0x58 79Byte  BPB(BIOS Parameter Block),<br>0x5A ~ 0x1FD 420Byte 引导程序，Win98之前的程序，这段代码负责完成DOS三个系统文件的装入，Win2000之后的系统，则负责将NTLDR文件装入，Win7系统负责将BOOTMGR装入。<br>0x1FE ~ 0x1FF 2Byte 结束标志，0x55AA</p>
-<h4 id="FAT1-和-FAT2"><a href="#FAT1-和-FAT2" class="headerlink" title="FAT1 和 FAT2"></a>FAT1 和 FAT2</h4><p>FAT(File Allocation Table)文件分配表，记录簇的使用情况和下一个簇的簇号。FAT2是FAT1的备份。</p>
-<h4 id="DATA"><a href="#DATA" class="headerlink" title="DATA"></a>DATA</h4><p>数据记录区</p>
-<h3 id="BPB"><a href="#BPB" class="headerlink" title="BPB"></a>BPB</h3><p>BIOS Parameter Block：BIOS参数块，对整个文件系统中比较重要的信息。其数据结构如下：<br>0x00 ~ 0x01 2Byte 每扇区字节数<br>0x02        1Byte 每簇扇区数<br>0x03 ~ 0x04 2Byte DOS保留扇区数<br>0x05        1Byte FAT表个数<br>0x06 ~ 0x09 4Byte 未使用<br>0xA0        1Byte 介质描述符<br>0xA1 ~ 0xA2 2Byte 未用<br>0xA3 ~ 0xA4 2Byte 每磁道扇区数<br>0xA5 ~ 0xA6 2Byte 磁头数<br>0xA7 ~ 0xAB 4Byte 隐藏扇区<br>0xAC ~ 0xAF 4Byte 该分区的扇区总数<br>0xB0 ~ 0xB3 4Byte 每FAT扇区数<br>0xB4 ~ 0xB5 2Byte 标记<br>0xB6 ~ 0xB7 2Byte 版本<br>0xB8 ~ 0xBB 4Byte 根目录首簇号<br>0xBC ~ 0xBD 2Byte 文件系统扇区号<br>0xBE ~ 0xBF 2Byte DBR备份扇区号<br>0xC0 ~ 0xCC 12Byte 保留<br>0xCD        1Byte BIOS驱动器号<br>0xCE        1Byte 未用<br>0xCF        1Byte 扩展引导标记<br>0xD0 ~ 0xD3 4Byte 卷序列号<br>0xD4 ~ 0xDE 11Byte 卷标<br>0xDF ~ 0xE6 8Byte 文件系统类型<br>通过上面可以看出，文件系统的所有参数都会记录在BPB当中。<br>遗留问题，上面的结构体不是自动内存对齐的，怎么搞才可以准确的读取出数据</p>
-<h2 id="MBR与GRUB"><a href="#MBR与GRUB" class="headerlink" title="MBR与GRUB"></a>MBR与GRUB</h2><p>  MBR是属于硬盘的结构，不属于任何系统。而GRUB是一个多重操作系统启动管理器，是属于操作系统的一个应用程序，因此GRUB不会写入MBR，而是由MBR引导出GRUB进行多重启动。会出现这种的原因是，每个文件系统都会在开始部分预留出一段空间存放引导引导加载程序。这也就为多系统启动提供了可能。比较常见的多重操作系统启动管理器有(NTLOADER、GRUE、LILO)。</p>
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
-<li><a href="https://blog.csdn.net/yuliyige/article/details/14815619" target="_blank" rel="noopener">数据恢复软件设计与实现(三)</a></li>
-<li><a href="https://www.cnblogs.com/hopeworld/archive/2011/03/27/1997298.html" target="_blank" rel="noopener">硬盘结构简介的好文(转)—MBR、分区表、CHS等概念</a></li>
-<li><a href="http://ask.zol.com.cn/x/4598955.html" target="_blank" rel="noopener">MBR和GRUB什么关系</a></li>
-</ol>
+<h2 id="Nmap扫描的解析过程"><a href="#Nmap扫描的解析过程" class="headerlink" title="Nmap扫描的解析过程"></a>Nmap扫描的解析过程</h2><p>Nmap扫描过程可以分为不同的阶段。执行扫描时,nmap完成一个阶段的扫描后才会进入下一个扫描阶段,每个扫描阶段完成不通的功能，根据需求，也可以跳过一些扫描阶段。Nmap的扫描过程大致分为如下几个阶段：</p>
+<h3 id="预扫描脚本"><a href="#预扫描脚本" class="headerlink" title="预扫描脚本"></a>预扫描脚本</h3><p>当使用nmap进行扫描时，指定了使用脚本的选项,如<code>--script</code>或<code>-sC</code>才会进入该阶段。在该阶段中执行的脚本是单个nmap实例执行的脚本，而不是针对每个扫描目标均执行的脚本。<code>-A</code>选项中包含<code>-sC</code>选项，即使用了<code>-A</code>选项会启动脚本扫描。</p>
+<h3 id="目标枚举"><a href="#目标枚举" class="headerlink" title="目标枚举"></a>目标枚举</h3><p>在该阶段nmap将用户输入的目标解析成IP的形式,然后进行下一步的深度扫描。该步骤不可省略。</p>
+<h3 id="主机发现"><a href="#主机发现" class="headerlink" title="主机发现"></a>主机发现</h3><p>网络中只有在线的主机才值得深入调查，发现在线主机的过程被称为主机发现或者PING 扫描。Nmap有许多种发现主机的方法，如ARP请求、TCP/ICMP及其它类型数据帧结合起来的扫描。<br>Nmap在主机发现过程当中并不只采用ARP或ICMP协议，还会对常见的一些端口进行TCP连接。</p>
+<h3 id="反向DNS解析"><a href="#反向DNS解析" class="headerlink" title="反向DNS解析"></a>反向DNS解析</h3><p>nmap会对输入的IP地址做反向域名解析，解析出绑定该IP的域名，从而协助判断该主机的作用。通过–dns-servers server1,server2…选项指定反向解析IP的DNS服务器。</p>
+<h3 id="端口扫描-https-0x4472-github-io-2019-07-28-Nmap-E5-AD-A6-E4-B9-A0-E7-AC-94-E8-AE-B0-E4-B9-8B-E7-AB-AF-E5-8F-A3-E6-89-AB-E6-8F-8F"><a href="#端口扫描-https-0x4472-github-io-2019-07-28-Nmap-E5-AD-A6-E4-B9-A0-E7-AC-94-E8-AE-B0-E4-B9-8B-E7-AB-AF-E5-8F-A3-E6-89-AB-E6-8F-8F" class="headerlink" title="(端口扫描)[https://0x4472.github.io/2019/07/28/Nmap%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/]"></a>(端口扫描)[<a href="https://0x4472.github.io/2019/07/28/Nmap%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/]" target="_blank" rel="noopener">https://0x4472.github.io/2019/07/28/Nmap%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/]</a></h3><p>Nmap实现的主要功能，Nmap主要是利用实现了不通协议的探测帧探测目标主机对应的端口，然后根据端口的响应帧判断端口所处的状态：open,closed,filtered等。</p>
+<h3 id="版本检测"><a href="#版本检测" class="headerlink" title="版本检测"></a>版本检测</h3><p>如果Nmap检测到某个端口处于开启状态，那么Nmap会继续向该端口发送探测帧，并根据其响应与数据库中6500多个已知服务指纹进行匹配。</p>
+<h3 id="系统检测"><a href="#系统检测" class="headerlink" title="系统检测"></a>系统检测</h3><p>不同的操作系统实现的网络标准会略有不同。Nmap通过向目标主机发送探测帧，然后与数据库中已知的指纹进行匹配，从而获取目标主机的系统信息。</p>
+<h3 id="路由追踪"><a href="#路由追踪" class="headerlink" title="路由追踪"></a>路由追踪</h3><p>Nmap还实现一套优化后的路由追踪实现，通过<code>--traceroute</code>选项开启路由追踪功能。</p>
+<h3 id="脚本扫描"><a href="#脚本扫描" class="headerlink" title="脚本扫描"></a>脚本扫描</h3><p>除了前面提到的预扫描与后扫描脚本，Nmap的大多数脚本都是在这个阶段运行的。Nmap内置了一个lua语言的脚本引擎及用于收集网络信息的标准库。</p>
+<h3 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h3><p>根据不通的选项，Nmap支持不同的输出格式。</p>
+<h3 id="后扫描脚本"><a href="#后扫描脚本" class="headerlink" title="后扫描脚本"></a>后扫描脚本</h3><p>当Nmap扫描完毕并输出结果之后，这个阶段的脚本可以处理扫描的结果形成报告并进行统计。Nmap在该阶段并未有任何提前预置的脚本，因此需要用户自己添加。</p>
 
       
     </div>
@@ -456,9 +428,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/DOS/" rel="tag"># DOS</a>
-          
-            <a href="/tags/文件系统/" rel="tag"># 文件系统</a>
+            <a href="/tags/网络安全工具/" rel="tag"># 网络安全工具</a>
           
         </div>
       
@@ -471,8 +441,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/05/Linux系统中实现GPT分区读取程序/" rel="next" title="Linux系统中实现GPT分区读取程序">
-                <i class="fa fa-chevron-left"></i> Linux系统中实现GPT分区读取程序
+              <a href="/2019/07/28/Nmap学习笔记之端口扫描/" rel="next" title="Nmap学习笔记之端口扫描">
+                <i class="fa fa-chevron-left"></i> Nmap学习笔记之端口扫描
               </a>
             
           </div>
@@ -480,10 +450,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/05/博客历史小记/" rel="prev" title="博客历史小记">
-                博客历史小记 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -715,7 +681,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DOS分区"><span class="nav-number">1.</span> <span class="nav-text">DOS分区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MBR"><span class="nav-number">1.1.</span> <span class="nav-text">MBR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MBR结构"><span class="nav-number">1.1.1.</span> <span class="nav-text">MBR结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#引导程序-MBR"><span class="nav-number">1.1.2.</span> <span class="nav-text">引导程序(MBR)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分区表"><span class="nav-number">1.1.3.</span> <span class="nav-text">分区表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结束标志"><span class="nav-number">1.1.4.</span> <span class="nav-text">结束标志</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FAT32"><span class="nav-number">1.2.</span> <span class="nav-text">FAT32</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FAT32结构"><span class="nav-number">1.2.1.</span> <span class="nav-text">FAT32结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DBR和保留扇区"><span class="nav-number">1.2.2.</span> <span class="nav-text">DBR和保留扇区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FAT1-和-FAT2"><span class="nav-number">1.2.3.</span> <span class="nav-text">FAT1 和 FAT2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DATA"><span class="nav-number">1.2.4.</span> <span class="nav-text">DATA</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BPB"><span class="nav-number">1.3.</span> <span class="nav-text">BPB</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBR与GRUB"><span class="nav-number">2.</span> <span class="nav-text">MBR与GRUB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">3.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Nmap扫描的解析过程"><span class="nav-number">1.</span> <span class="nav-text">Nmap扫描的解析过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#预扫描脚本"><span class="nav-number">1.1.</span> <span class="nav-text">预扫描脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#目标枚举"><span class="nav-number">1.2.</span> <span class="nav-text">目标枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主机发现"><span class="nav-number">1.3.</span> <span class="nav-text">主机发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向DNS解析"><span class="nav-number">1.4.</span> <span class="nav-text">反向DNS解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口扫描-https-0x4472-github-io-2019-07-28-Nmap-E5-AD-A6-E4-B9-A0-E7-AC-94-E8-AE-B0-E4-B9-8B-E7-AB-AF-E5-8F-A3-E6-89-AB-E6-8F-8F"><span class="nav-number">1.5.</span> <span class="nav-text">(端口扫描)[https://0x4472.github.io/2019/07/28/Nmap%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#版本检测"><span class="nav-number">1.6.</span> <span class="nav-text">版本检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统检测"><span class="nav-number">1.7.</span> <span class="nav-text">系统检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由追踪"><span class="nav-number">1.8.</span> <span class="nav-text">路由追踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#脚本扫描"><span class="nav-number">1.9.</span> <span class="nav-text">脚本扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输出"><span class="nav-number">1.10.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后扫描脚本"><span class="nav-number">1.11.</span> <span class="nav-text">后扫描脚本</span></a></li></ol></li></ol></div>
             
 
           </div>
