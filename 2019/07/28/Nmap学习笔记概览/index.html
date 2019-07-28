@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="红猪的笔记">
 <meta property="og:description" content="日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-28T10:42:17.147Z">
+<meta property="og:updated_time" content="2019-07-28T10:45:11.890Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nmap学习笔记概览">
 <meta name="twitter:description" content="日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。">
@@ -260,14 +260,6 @@
     <a href="/archives/" rel="section">
       <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-translate_book">
-    <a href="/translate_book" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-translate_book"></i> <br />翻译图书</a>
-  </li>
 
       
       
@@ -359,7 +351,7 @@
                 
               
 
-              <time title="创建时间：2019-07-28 18:38:40 / 修改时间：18:42:17" itemprop="dateCreated datePublished" datetime="2019-07-28T18:38:40+08:00">2019-07-28</time>
+              <time title="创建时间：2019-07-28 18:38:40 / 修改时间：18:45:11" itemprop="dateCreated datePublished" datetime="2019-07-28T18:38:40+08:00">2019-07-28</time>
             
 
             
@@ -416,8 +408,9 @@
 
       
         <blockquote>
-<p>日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。<br><a id="more"></a></p>
+<p>日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。</p>
 </blockquote>
+<a id="more"></a>
 <h2 id="Nmap扫描的解析过程"><a href="#Nmap扫描的解析过程" class="headerlink" title="Nmap扫描的解析过程"></a>Nmap扫描的解析过程</h2><p>Nmap扫描过程可以分为不同的阶段。执行扫描时,nmap完成一个阶段的扫描后才会进入下一个扫描阶段,每个扫描阶段完成不通的功能，根据需求，也可以跳过一些扫描阶段。Nmap的扫描过程大致分为如下几个阶段：</p>
 <h3 id="预扫描脚本"><a href="#预扫描脚本" class="headerlink" title="预扫描脚本"></a>预扫描脚本</h3><p>当使用nmap进行扫描时，指定了使用脚本的选项,如<code>--script</code>或<code>-sC</code>才会进入该阶段。在该阶段中执行的脚本是单个nmap实例执行的脚本，而不是针对每个扫描目标均执行的脚本。<code>-A</code>选项中包含<code>-sC</code>选项，即使用了<code>-A</code>选项会启动脚本扫描。</p>
 <h3 id="目标枚举"><a href="#目标枚举" class="headerlink" title="目标枚举"></a>目标枚举</h3><p>在该阶段nmap将用户输入的目标解析成IP的形式,然后进行下一步的深度扫描。该步骤不可省略。</p>

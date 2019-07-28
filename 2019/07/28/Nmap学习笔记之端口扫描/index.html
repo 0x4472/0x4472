@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="红猪的笔记">
 <meta property="og:description" content="端口扫描是Nmap的核心功能，Nmap支持多种扫描方式，不同的扫描方法具有探测原理不一致，且实现的效果不同。在有的网络环境中，汇总查看各种扫描方法的结果能够探测更为准确的主机信息。在命令行中可以使用-s&amp;lt;C&amp;gt;选项指定端口扫描的方法，除-sU之外，其它几个扫描选项不能混用。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-28T10:37:13.093Z">
+<meta property="og:updated_time" content="2019-07-28T10:44:27.154Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nmap学习笔记之端口扫描">
 <meta name="twitter:description" content="端口扫描是Nmap的核心功能，Nmap支持多种扫描方式，不同的扫描方法具有探测原理不一致，且实现的效果不同。在有的网络环境中，汇总查看各种扫描方法的结果能够探测更为准确的主机信息。在命令行中可以使用-s&amp;lt;C&amp;gt;选项指定端口扫描的方法，除-sU之外，其它几个扫描选项不能混用。">
@@ -260,14 +260,6 @@
     <a href="/archives/" rel="section">
       <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-translate_book">
-    <a href="/translate_book" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-translate_book"></i> <br />翻译图书</a>
-  </li>
 
       
       
@@ -359,7 +351,7 @@
                 
               
 
-              <time title="创建时间：2019-07-28 18:31:13 / 修改时间：18:37:13" itemprop="dateCreated datePublished" datetime="2019-07-28T18:31:13+08:00">2019-07-28</time>
+              <time title="创建时间：2019-07-28 18:31:13 / 修改时间：18:44:27" itemprop="dateCreated datePublished" datetime="2019-07-28T18:31:13+08:00">2019-07-28</time>
             
 
             
@@ -416,8 +408,9 @@
 
       
         <blockquote>
-<p>端口扫描是Nmap的核心功能，Nmap支持多种扫描方式，不同的扫描方法具有探测原理不一致，且实现的效果不同。在有的网络环境中，汇总查看各种扫描方法的结果能够探测更为准确的主机信息。在命令行中可以使用<code>-s&lt;C&gt;</code>选项指定端口扫描的方法，除<code>-sU</code>之外，其它几个扫描选项不能混用。<br><a id="more"></a></p>
+<p>端口扫描是Nmap的核心功能，Nmap支持多种扫描方式，不同的扫描方法具有探测原理不一致，且实现的效果不同。在有的网络环境中，汇总查看各种扫描方法的结果能够探测更为准确的主机信息。在命令行中可以使用<code>-s&lt;C&gt;</code>选项指定端口扫描的方法，除<code>-sU</code>之外，其它几个扫描选项不能混用。</p>
 </blockquote>
+<a id="more"></a>
 <p>在Nmap当中大多数扫描方式需要操控原始的IP数据包，因此需要具有root/Administrator权限。如果没有对应的权限，有些Nmap会采用socket三次连接的方式替代不同的扫描方法，达到相同的扫描效果，需要发送更多的数据包。</p>
 <h3 id="端口状态"><a href="#端口状态" class="headerlink" title="端口状态"></a>端口状态</h3><p>在Nmap当中扫描的端口被分成:open,closed,filtered,unfilterd,open|filtered,closed|filtered 六种状态。同一个扫描方法中不会同时存在这6种状态，每种状态会因为扫描方式的不同返回不同的结果。</p>
 <h4 id="open"><a href="#open" class="headerlink" title="open"></a>open</h4><p>open表示端口处于开启状态，说明有应用程序正在监听该端口。该端口能够接收TCP或者UDP数据包，同时对接收到的数据包做出响应。</p>
