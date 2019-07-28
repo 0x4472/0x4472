@@ -111,14 +111,14 @@
   <meta name="description" content="日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。">
 <meta name="keywords" content="网络安全工具">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Nmap学习笔记一">
+<meta property="og:title" content="Nmap学习笔记概览">
 <meta property="og:url" content="http://yoursite.com/2019/07/28/Nmap学习笔记概览/index.html">
 <meta property="og:site_name" content="红猪的笔记">
 <meta property="og:description" content="日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-28T10:38:40.108Z">
+<meta property="og:updated_time" content="2019-07-28T10:42:17.147Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Nmap学习笔记一">
+<meta name="twitter:title" content="Nmap学习笔记概览">
 <meta name="twitter:description" content="日常的工作中经常使用Nmap扫描机器，虽然能够记住nmap的各个扫描选项，但从没有研究过各个扫描之间的差异以及nmap在底层的一些实现机制。因此特意研究一下Nmap的官方文档，现对文档学习做一个简单的笔记,一是加深自己的理解，而是方便后期自己的复习。">
 
 
@@ -136,7 +136,7 @@
   };
 </script>
 
-  <title>Nmap学习笔记一 | 红猪的笔记</title>
+  <title>Nmap学习笔记概览 | 红猪的笔记</title>
   
 
 
@@ -334,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Nmap学习笔记一
+          <h1 class="post-title" itemprop="name headline">Nmap学习笔记概览
               
             
           </h1>
@@ -359,12 +359,34 @@
                 
               
 
-              <time title="创建时间：2019-07-28 18:38:40" itemprop="dateCreated datePublished" datetime="2019-07-28T18:38:40+08:00">2019-07-28</time>
+              <time title="创建时间：2019-07-28 18:38:40 / 修改时间：18:42:17" itemprop="dateCreated datePublished" datetime="2019-07-28T18:38:40+08:00">2019-07-28</time>
             
 
+            
+              
+
+              
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/安全服务/" itemprop="url" rel="index"><span itemprop="name">安全服务</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -401,7 +423,7 @@
 <h3 id="目标枚举"><a href="#目标枚举" class="headerlink" title="目标枚举"></a>目标枚举</h3><p>在该阶段nmap将用户输入的目标解析成IP的形式,然后进行下一步的深度扫描。该步骤不可省略。</p>
 <h3 id="主机发现"><a href="#主机发现" class="headerlink" title="主机发现"></a>主机发现</h3><p>网络中只有在线的主机才值得深入调查，发现在线主机的过程被称为主机发现或者PING 扫描。Nmap有许多种发现主机的方法，如ARP请求、TCP/ICMP及其它类型数据帧结合起来的扫描。<br>Nmap在主机发现过程当中并不只采用ARP或ICMP协议，还会对常见的一些端口进行TCP连接。</p>
 <h3 id="反向DNS解析"><a href="#反向DNS解析" class="headerlink" title="反向DNS解析"></a>反向DNS解析</h3><p>nmap会对输入的IP地址做反向域名解析，解析出绑定该IP的域名，从而协助判断该主机的作用。通过–dns-servers server1,server2…选项指定反向解析IP的DNS服务器。</p>
-<h3 id="端口扫描-https-0x4472-github-io-2019-07-28-Nmap-E5-AD-A6-E4-B9-A0-E7-AC-94-E8-AE-B0-E4-B9-8B-E7-AB-AF-E5-8F-A3-E6-89-AB-E6-8F-8F"><a href="#端口扫描-https-0x4472-github-io-2019-07-28-Nmap-E5-AD-A6-E4-B9-A0-E7-AC-94-E8-AE-B0-E4-B9-8B-E7-AB-AF-E5-8F-A3-E6-89-AB-E6-8F-8F" class="headerlink" title="(端口扫描)[https://0x4472.github.io/2019/07/28/Nmap%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/]"></a>(端口扫描)[<a href="https://0x4472.github.io/2019/07/28/Nmap%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/]" target="_blank" rel="noopener">https://0x4472.github.io/2019/07/28/Nmap%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/]</a></h3><p>Nmap实现的主要功能，Nmap主要是利用实现了不通协议的探测帧探测目标主机对应的端口，然后根据端口的响应帧判断端口所处的状态：open,closed,filtered等。</p>
+<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a><a href="https://0x4472.github.io/2019/07/28/Nmap%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/" target="_blank" rel="noopener">端口扫描</a></h3><p>Nmap实现的主要功能，Nmap主要是利用实现了不通协议的探测帧探测目标主机对应的端口，然后根据端口的响应帧判断端口所处的状态：open,closed,filtered等。</p>
 <h3 id="版本检测"><a href="#版本检测" class="headerlink" title="版本检测"></a>版本检测</h3><p>如果Nmap检测到某个端口处于开启状态，那么Nmap会继续向该端口发送探测帧，并根据其响应与数据库中6500多个已知服务指纹进行匹配。</p>
 <h3 id="系统检测"><a href="#系统检测" class="headerlink" title="系统检测"></a>系统检测</h3><p>不同的操作系统实现的网络标准会略有不同。Nmap通过向目标主机发送探测帧，然后与数据库中已知的指纹进行匹配，从而获取目标主机的系统信息。</p>
 <h3 id="路由追踪"><a href="#路由追踪" class="headerlink" title="路由追踪"></a>路由追踪</h3><p>Nmap还实现一套优化后的路由追踪实现，通过<code>--traceroute</code>选项开启路由追踪功能。</p>
@@ -681,7 +703,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Nmap扫描的解析过程"><span class="nav-number">1.</span> <span class="nav-text">Nmap扫描的解析过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#预扫描脚本"><span class="nav-number">1.1.</span> <span class="nav-text">预扫描脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#目标枚举"><span class="nav-number">1.2.</span> <span class="nav-text">目标枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主机发现"><span class="nav-number">1.3.</span> <span class="nav-text">主机发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向DNS解析"><span class="nav-number">1.4.</span> <span class="nav-text">反向DNS解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口扫描-https-0x4472-github-io-2019-07-28-Nmap-E5-AD-A6-E4-B9-A0-E7-AC-94-E8-AE-B0-E4-B9-8B-E7-AB-AF-E5-8F-A3-E6-89-AB-E6-8F-8F"><span class="nav-number">1.5.</span> <span class="nav-text">(端口扫描)[https://0x4472.github.io/2019/07/28/Nmap%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F/]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#版本检测"><span class="nav-number">1.6.</span> <span class="nav-text">版本检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统检测"><span class="nav-number">1.7.</span> <span class="nav-text">系统检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由追踪"><span class="nav-number">1.8.</span> <span class="nav-text">路由追踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#脚本扫描"><span class="nav-number">1.9.</span> <span class="nav-text">脚本扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输出"><span class="nav-number">1.10.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后扫描脚本"><span class="nav-number">1.11.</span> <span class="nav-text">后扫描脚本</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Nmap扫描的解析过程"><span class="nav-number">1.</span> <span class="nav-text">Nmap扫描的解析过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#预扫描脚本"><span class="nav-number">1.1.</span> <span class="nav-text">预扫描脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#目标枚举"><span class="nav-number">1.2.</span> <span class="nav-text">目标枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主机发现"><span class="nav-number">1.3.</span> <span class="nav-text">主机发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向DNS解析"><span class="nav-number">1.4.</span> <span class="nav-text">反向DNS解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口扫描"><span class="nav-number">1.5.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#版本检测"><span class="nav-number">1.6.</span> <span class="nav-text">版本检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统检测"><span class="nav-number">1.7.</span> <span class="nav-text">系统检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由追踪"><span class="nav-number">1.8.</span> <span class="nav-text">路由追踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#脚本扫描"><span class="nav-number">1.9.</span> <span class="nav-text">脚本扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输出"><span class="nav-number">1.10.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后扫描脚本"><span class="nav-number">1.11.</span> <span class="nav-text">后扫描脚本</span></a></li></ol></li></ol></div>
             
 
           </div>
