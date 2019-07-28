@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="端口扫描是Nmap的核心功能，Nmap支持多种扫描方式，不同的扫描方法具有探测原理不一致，且实现的效果不同。在有的网络环境中，汇总查看各种扫描方法的结果能够探测更为准确的主机信息。在命令行中可以使用-s&amp;lt;C&amp;gt;选项指定端口扫描的方法，除-sU之外，其它几个扫描选项不能混用。">
+<meta name="keywords" content="网络安全工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nmap学习笔记之端口扫描">
+<meta property="og:url" content="http://yoursite.com/2019/07/28/Nmap学习笔记之端口扫描/index.html">
+<meta property="og:site_name" content="红猪的笔记">
+<meta property="og:description" content="端口扫描是Nmap的核心功能，Nmap支持多种扫描方式，不同的扫描方法具有探测原理不一致，且实现的效果不同。在有的网络环境中，汇总查看各种扫描方法的结果能够探测更为准确的主机信息。在命令行中可以使用-s&amp;lt;C&amp;gt;选项指定端口扫描的方法，除-sU之外，其它几个扫描选项不能混用。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-28T10:31:13.710Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nmap学习笔记之端口扫描">
+<meta name="twitter:description" content="端口扫描是Nmap的核心功能，Nmap支持多种扫描方式，不同的扫描方法具有探测原理不一致，且实现的效果不同。在有的网络环境中，汇总查看各种扫描方法的结果能够探测更为准确的主机信息。在命令行中可以使用-s&amp;lt;C&amp;gt;选项指定端口扫描的方法，除-sU之外，其它几个扫描选项不能混用。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/28/Nmap学习笔记之端口扫描/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Nmap学习笔记之端口扫描 | 红猪的笔记</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">红猪的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">I am always on the way</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-translate_book">
+    <a href="/translate_book" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-translate_book"></i> <br />翻译图书</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/28/Nmap学习笔记之端口扫描/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="红猪">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="红猪的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Nmap学习笔记之端口扫描
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-28 18:31:13" itemprop="dateCreated datePublished" datetime="2019-07-28T18:31:13+08:00">2019-07-28</time>
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>端口扫描是Nmap的核心功能，Nmap支持多种扫描方式，不同的扫描方法具有探测原理不一致，且实现的效果不同。在有的网络环境中，汇总查看各种扫描方法的结果能够探测更为准确的主机信息。在命令行中可以使用<code>-s&lt;C&gt;</code>选项指定端口扫描的方法，除<code>-sU</code>之外，其它几个扫描选项不能混用。<br><a id="more"></a></p>
+</blockquote>
+<p>在Nmap当中大多数扫描方式需要操控原始的IP数据包，因此需要具有root/Administrator权限。如果没有对应的权限，有些Nmap会采用socket三次连接的方式替代不同的扫描方法，达到相同的扫描效果，需要发送更多的数据包。</p>
+<h3 id="端口状态"><a href="#端口状态" class="headerlink" title="端口状态"></a>端口状态</h3><p>在Nmap当中扫描的端口被分成:open,closed,filtered,unfilterd,open|filtered,closed|filtered 六种状态。同一个扫描方法中不会同时存在这6种状态，每种状态会因为扫描方式的不同返回不同的结果。</p>
+<h4 id="open"><a href="#open" class="headerlink" title="open"></a>open</h4><p>open表示端口处于开启状态，说明有应用程序正在监听该端口。该端口能够接收TCP或者UDP数据包，同时对接收到的数据包做出响应。</p>
+<h4 id="closed"><a href="#closed" class="headerlink" title="closed"></a>closed</h4><p>closed表示端口处于关闭状态,说明没有应用程序监听该端口。</p>
+<h4 id="filtered"><a href="#filtered" class="headerlink" title="filtered"></a>filtered</h4><p>filtered表明该端口没有任何的响应数据包，或者发送的探测帧被拦截，未能到达目的端口。或者端口有响应，但是响应的数据包全是ICMP错误信息(目标不可达:通信被管理员禁止)。此时有可能扫描主机与目标主机之间有防火墙，防火墙丢弃了所有的扫描或响应帧。注意：网络不通或IP未启用也会出现全端口被过滤的情况。</p>
+<h4 id="unfiltered"><a href="#unfiltered" class="headerlink" title="unfiltered"></a>unfiltered</h4><p>unfilter状态不是在所有扫描方法中都会存在，unfilter表明端口能够接收数据包，但是无法判断端口时开启还是关闭状态。使用Ack方式扫描时会出现处于该状态的端口。</p>
+<h4 id="open-filtered"><a href="#open-filtered" class="headerlink" title="open|filtered"></a>open|filtered</h4><p>open|filtered 表明nmap无法判断端口是处于开启状态还是处于过滤状态。只有在特定的扫描方式下会出现该种状态的端口。如UDP扫描、IP协议扫描、FIN、NULL、Xmax扫描均会出现这种状态的端口。</p>
+<h4 id="closed-filtered"><a href="#closed-filtered" class="headerlink" title="closed|filtered"></a>closed|filtered</h4><p>表明nmap无法判断端口是处于关闭状态还是处于过滤状态，只有在特定的扫描方式下才会出现该种状态的端口。如IPID Idle扫描。</p>
+<h3 id="扫描方法"><a href="#扫描方法" class="headerlink" title="扫描方法"></a>扫描方法</h3><p>Nmap支持TCP/UDP两种协议的端口扫描方法。同时UDP扫描时可以结合使用TCP扫描。</p>
+<h4 id="SYN-Scan"><a href="#SYN-Scan" class="headerlink" title="SYN Scan"></a>SYN Scan</h4><p>命令行选项: <code>-sS</code><br>Nmap默认使用该种方式进行扫描。SYN扫描利用了TCP三次接时的第一次连接，通过发送设置了SYN标注的探测帧去扫描目标主机的端口，此时目标主机的端口会被分为三中状态：open、filtered、closed。</p>
+<ul>
+<li>opend: 目标主机正常响应三次连接的数据帧。即响应设置了SYN/ACK标志位的数据帧。</li>
+<li>closed: 此时目标主机响应RST帧</li>
+<li>filtered: 目标主机没有任何响应，或者响应的是ICMP不可达的错误消息(Type3,code 1,2,3,9,10 or 13)<br>优点: 快速、隐蔽(目标主机不会发现扫描主机的连接记录)、通用<h4 id="TCP-Scan"><a href="#TCP-Scan" class="headerlink" title="TCP Scan"></a>TCP Scan</h4>命令行选项: <code>-sT</code><br>TCP扫描就是利用系统的三次连接对目标主机的端口进行扫描。当Nmap不是以root/Administrator权限启动时，就会使用TCP扫描。扫描的端口状态与SYN扫描类似：</li>
+<li>open: 目标主机正常响应三次连接的数据帧。即响应设置了SYN/ACK标志位的数据帧。</li>
+<li>closed: 此时目标主机响应RST帧</li>
+<li>filtered: 目标主机没有任何响应，或者响应的是ICMP不可达的错误消息(Type3,code 1,2,3,9,10 or 13)<h4 id="UDP-Scan"><a href="#UDP-Scan" class="headerlink" title="UDP Scan"></a>UDP Scan</h4>命令行选项: <code>-sU</code><br>UDP扫描是Nmap扫描选项中唯一一个可以与其它扫描选项共用的扫描选项。对于大多数UDP端口，Nmap会向目标端口发送一个空的UDP数据包。但是对于常用且知名的UDP端口，Nmap会发送指定协议的数据包。根据端口的响应，Nmap会将端口分为四个状态:</li>
+<li>open: UDP端口有响应数据包</li>
+<li>open|filtered: 无任何响应</li>
+<li>closed: ICMP 不可达响应(Type3,Code 3)</li>
+<li>filtered: 其它的ICMP不可达响应(type 3, code 1, 2, 9, 10, or 13)<br>不同的UDP端口使用的数据包结构往往不一致。而且UDP是无状态的,这就导致Nmap无法发送一个统一的数据包进行探测。为了探测一些知名的服务，Nmap需要使用一个数据库来存储每个知名服务的探测帧格式，在<code>nmap-service-probes</code>文件中，存储有这些数据。当启用版本探测(<code>-sV/-A</code>)选项时，Nmap就会向所有处于open|filtered状态的端口发送探测帧。如果有端口对某一探测帧做出了响应，Nmap就会将端口的open|filtered状态更改为open(Nmap5.1之后启用UDP探测时，默认会向知名的UDP端口发送对应的探测数据帧)。因此可以结合使用-sV选项来探测主机UDP端口的状态。<h5 id="优化UDP的扫描速度"><a href="#优化UDP的扫描速度" class="headerlink" title="优化UDP的扫描速度"></a>优化UDP的扫描速度</h5>UDP扫描速度要比TCP的SYN扫描速度慢，因此可以利用Nmap的一些选项优化Nmap的扫描速度。</li>
+<li>增加同时扫描主机的数量<br>利用 <code>--min-hostgroup</code>选项增加同时扫描主机的数量。</li>
+<li>优化发送的探测帧<br>利用<code>--version-intensity 0</code>选项减少Nmap发送的探测帧。当开启-sV选线时，Nmap会向处于open|filtered状态的端口发送大量的数据帧以识别端口是否处于open状态。而利用<code>--version-intensity 0</code>选项，则Nmap只会发送最有可能的数据帧。</li>
+<li>减少主机等待时间<br>由于主机对响应的ICMP消息有速率限制，因此无法对每一个探测帧快速的响应ICMP目标不可达的消息。可以利用<code>--host-timeout</code>选项减少Nmap主机的等待时间，从而跳过扫描比较慢的主机。<h4 id="TCP-FIN-NULL-and-Xmas-Scan"><a href="#TCP-FIN-NULL-and-Xmas-Scan" class="headerlink" title="TCP FIN,NULL and Xmas Scan"></a>TCP FIN,NULL and Xmas Scan</h4>FIN、NULL、Xmas扫描分别对应: <code>-sF、-sN、-sX</code>选项<br>这三种扫描选项主要是根据TCP RFC中的一处实现细节来区分端口的状态。在RFC 793的65页中曾记录：如果关闭的端口收到不包含RST标志位的数据包，那么该端口就响应RST数据包。并且在下一页中写道，如果开放的端口收到了没有设置SYN、RST或ACK标志位的数据包，那么应该将其丢弃掉。因此可以将端口分为下面三种状态：</li>
+<li>open|filtered: 端口无任何响应</li>
+<li>closed: 端口响应RST数据包</li>
+<li>filtered: 端口返回ICMP不可达错误消息(type 3, code 1, 2, 3, 9, 10, or 13)<br>优点:FIN、Null、Xmas扫描能够绕过无状态的防火墙。<br>缺点：1.并不是所有的操作系统都遵循RFC973，一些操作系统不论端口是否开启都回响应RST数据包。如大多数的Windows、Cisco设备、IMB OS/400。 2. 无法区分端口是open还是filtered。 <h4 id="Ack-Scan"><a href="#Ack-Scan" class="headerlink" title="Ack Scan"></a>Ack Scan</h4>扫描选项：<code>-sA</code><br>与其它的扫描选项不同，ACK扫描不能区分端口是否开启，因为无论端口是开启还是关闭状态对于ACK扫描都会响应RST,此时Nmap会将端口标记为unfiltered状态。Ack扫描可以用来映射防火墙的规则，判断防火墙是否是有状态的，并判断被防火墙防护的端口。</li>
+<li>unfiltered: 端口响应RST数据包(无法判断端口是open还是closed)</li>
+<li>filtered: 端口未响应或者响应ICMP不可达消息(type 3, code 1, 2, 3, 9, 10, or 13)<h4 id="Windows-Scan"><a href="#Windows-Scan" class="headerlink" title="Windows Scan"></a>Windows Scan</h4>扫描选项: <code>-sW</code><br>Windows Scan发送的扫描数据包与Ack Scan发送的数据包是一致的，只不过Windows Scan是通过判断返回数据包中Window Size的值来判断端口是否开启。一些系统中，开放端口会将RST响应数据包中的Windows Size设置为正值，而关闭的端口会将RST响应包中的Window Size设置为0。</li>
+<li>open: RST响应包中的Window Size为正值</li>
+<li>closed: RST响应包中的Window Size 为0</li>
+<li>filterd:  端口未响应或者响应ICMP不可达消息(type 3, code 1, 2, 3, 9, 10, or 13)<br>该扫描选项只能适用于互联网上的部分机器，因此扫描结果不是十分可靠，不应该完全相信该扫描结果。<h4 id="Maimon-Scan"><a href="#Maimon-Scan" class="headerlink" title="Maimon Scan"></a>Maimon Scan</h4>扫描选项: <code>-sM</code><br>Uriel Maimon发现的扫描方法，根据RFC793文档，当系统接收到FIN/ACK探测帧时，无论端口是否开启操作系统都应该响应RST数据包，但是Uriel发现，大多数BSD系统中，如果端口是开启的，则会丢弃该数据包。现代操作系统很少存在该问题，现在一般所有操作系统都会返回RST数据包。</li>
+<li>open|filtered: 未收到任何响应数据包</li>
+<li>closed: 收到RST响应数据包</li>
+<li>filtered: 收到ICMP不可达的错误数据包<br>由于现代系统支持该扫描方法的比较少，因此扫描结果不是十分可靠。<h4 id="Idle-Scan"><a href="#Idle-Scan" class="headerlink" title="Idle Scan"></a>Idle Scan</h4>扫描选项: <code>-sI host1 Target</code><br>Idle扫描是一种完全的盲扫描，扫描机器无需使用自己的IP地址向目标主机发送数据包，通过侧信道攻击的方式来获取目标主机端口的开启情况。Idle扫描的原理如下：<br>网络中的IP数据包都有一个fragment identification number(IP ID)。许多操作系统每发送一个IP数据包该IPID字段就会加1(不会为每个目标主机单独创建一个IPID序列)。如果向主机发送一个设置了SYN/ACK标志位的数据包，无论端口是开启还是关闭，都会响应一个RST数据包。<br>因此找一个符合条件(IPID会依次增长，不会为每个主机单独设置一个IPID序列)的僵尸机，向该主机发送一个设置有SYN/ACK标志位的数据包，然后获取到当前的IPID，之后扫描主机构造一个源IP为僵尸主机的IP且设置有SYN标志位的数据包，发送给扫描的目标主机，这样如果端口开启的话，目标主机会像僵尸主机发送一个设置有ACK/SYN标志位的数据包(端口开启)，僵尸机回复一个RST数据包，IPID加一。最后扫描主机再像僵尸机发送一个设置有ACK/SYN标志位的数据包，然后获取RST数据包中的IPID字段，通过读取IPID字段的值，判断目标主机的端口是否开启。端口如果开启了的话，IPID的值会比第一次记录的IPID的值加2,端口如果没有开启，则IPID的值会维持不变。<br>Nmap的实现方法要比上述的复杂，因为Nmap需要实现并发扫描，如果同时扫描多个端口，尽管可以知道有多少端口开启，但是无法知道主机开启的具体端口号。Nmap具体的实现方式为，先并发扫描多个（100）端口，如果发现了其中有N个端口开启，则使用二分法，查找这些开启的端口。<br>根据前面的描述可知,使用该扫描方法，会探测到两种端口状态:</li>
+<li>open: 端口开启,目标主机向僵尸主机响应了SYN/ACK数据包</li>
+<li>closed| filtered: 目标主机未响应任何数据包<h5 id="选择僵尸主机"><a href="#选择僵尸主机" class="headerlink" title="选择僵尸主机"></a>选择僵尸主机</h5>使用该Idle扫描方法比较困难的是需要寻找一个符合条件的僵尸主机,而且除了满足IPID是全局增长的之外，与该主机通信的主机最好比较少，这样就能产生更少的噪音。<br>当向目标主机进行探测时，使用<code>-O</code>选项开启了目标主机的系统探测并冗余输出<code>-v</code>的话，会在输出的数据中看到系统IP ID的生成方法，例如会输出”IP ID Sequence Generation:Incremental”，如果输出的类型是Incremental或者Broken little-endian incremental的话，那么该主机就有可能成为僵尸主机。<br>另一个方法是扫描主机时运行<code>ipidseq</code>NSE脚本，这个脚本会探测目标主机IP ID的生成方法。</li>
+</ul>
+<p>该种扫描方式还可以用来探测IP之间的信任关系，例如某些主机仅允许固定来源的IP数据包进入。主要如果为了隐蔽，还需要使用<code>-Pn</code>选项，否则目标主机还是会收到扫描主机的IP。</p>
+<h4 id="IP-Protocol-Scan"><a href="#IP-Protocol-Scan" class="headerlink" title="IP Protocol Scan"></a>IP Protocol Scan</h4><p>扫描选项: <code>-sO</code>(是字母O不是数字零)<br>IP协议扫描不是扫描主机的端口，而是探测目标主机支持的IP协议。通过不断更改IP数据包中代表协议的标号，构造探测帧并发送给目标主机，来探测目标主机支持的协议。此时<code>-p</code>选项不再是表明的端口号，而是表明的协议号。</p>
+<ul>
+<li>open: 构造的协议有响应</li>
+<li>closed: ICMP不可达消息(type 3, code 2)</li>
+<li>filtered: 其它的ICMP不可达响应(type 3, code 1, 3, 9, 10, or 13)</li>
+<li>open|filtered: 无任何响应(重发之后也每任何响应)<br>可以利用该种扫描方式来判断主机的作用，如路由器或其它设备<h4 id="FTP-Bounce-Scan"><a href="#FTP-Bounce-Scan" class="headerlink" title="FTP Bounce Scan"></a>FTP Bounce Scan</h4>扫描选项: <code>-b</code><br>之前的Ftp服务器允许用户连接至Ftp服务器，并要求该服务器向第三方服务器发送文件,返回的错误消息可以判断端口是否开启，因此利用这种方式可以探测目标主机的端口状态。<br>使用方法为:<code>-b &lt;username&gt;:&lt;password&gt;@&lt;Ftp_Server&gt;:&lt;port&gt;  &lt;Target_Server&gt;</code><h3 id="时间消耗相关的参数"><a href="#时间消耗相关的参数" class="headerlink" title="时间消耗相关的参数"></a>时间消耗相关的参数</h3>Nmap扫描过程中，端口扫描会占据较长的时间。Nmap提供了命令选项来设置一些数据的超时时间。大部分选项的默认时间单位是秒，不过也可以自定指定单位，如m(毫秒),s(秒),m(分钟),h(小时)<h4 id="T0到-T5"><a href="#T0到-T5" class="headerlink" title="-T0到-T5"></a><code>-T0</code>到<code>-T5</code></h4><code>-T0</code>到<code>-T5</code>代表6个提前定义好的时间模板，<code>-T0</code>代表最慢，<code>-T5</code>代表最激烈。<h4 id="min-rtt-timeout-max-rtt-timeout-initial-rtt-timeout"><a href="#min-rtt-timeout-max-rtt-timeout-initial-rtt-timeout" class="headerlink" title="--min-rtt-timeout --max-rtt-timeout --initial-rtt-timeout"></a><code>--min-rtt-timeout</code> <code>--max-rtt-timeout</code> <code>--initial-rtt-timeout</code></h4>探测帧从发出到收到该帧的响应时间为一个数据帧的RTT时间。<code>--min-rtt-timeout</code> <code>--max-rtt-timeout</code> <code>--initial-rtt-timeout</code>分别表示Nmap等待响应帧的最小、最大和初始时间。<strong>使用Nmap进行扫描时，可以先用Ping命令探测一下基本的RTT时间，然后手动指定一下<code>--max-rtt-timeout</code>和<code>--initial-rtt-timeout</code></strong><h4 id="host-timeout"><a href="#host-timeout" class="headerlink" title="--host-timeout"></a><code>--host-timeout</code></h4>Nmap等待一个主机响应的最长时间，如果超过这个时间，Nmap将会放弃对该主机的扫描。主机发现是使用。<h4 id="min-rate-max-rate"><a href="#min-rate-max-rate" class="headerlink" title="--min-rate --max-rate"></a><code>--min-rate</code> <code>--max-rate</code></h4>设置Nmap每秒钟发送探测帧的数量<h4 id="max-retries"><a href="#max-retries" class="headerlink" title="--max-retries"></a><code>--max-retries</code></h4>设置Nmap对某个端口探测帧的重发次数。<h4 id="min-hostgroup-max-hostgroup"><a href="#min-hostgroup-max-hostgroup" class="headerlink" title="--min-hostgroup --max-hostgroup"></a><code>--min-hostgroup</code> <code>--max-hostgroup</code></h4>设置Nmap一次扫描的最小、最大主机数。<h4 id="min-parallelism-max-parallelism"><a href="#min-parallelism-max-parallelism" class="headerlink" title="--min-parallelism --max-parallelism"></a><code>--min-parallelism</code> <code>--max-parallelism</code></h4>设置Nmap扫描主机端口的最小、最大并发数。可以理解为一次扫描多少个端口(不一定是同一个主机的)<h4 id="scan-delay-max-scan-delay"><a href="#scan-delay-max-scan-delay" class="headerlink" title="--scan-delay --max-scan-delay"></a><code>--scan-delay</code> <code>--max-scan-delay</code></h4>设置Nmap在探测另一个主机时等待的时间数，如果Nmap检测到数据包丢失，会增加等待时间，但是该时间会一直增加到指定的<code>--max-scan-delay</code><h3 id="提高Nmap扫描速度的技巧"><a href="#提高Nmap扫描速度的技巧" class="headerlink" title="提高Nmap扫描速度的技巧"></a>提高Nmap扫描速度的技巧</h3>在扫描主机时，可以分别利用<code>-Pn</code>和<code>-n</code>选项关闭对主机的<code>Ping</code>扫描和反向<code>DNS</code>查询,同时根据手动<code>ping</code>的结果设置等待探测帧的时间。该方法不适合探测多个主机。<h3 id="输出选项"><a href="#输出选项" class="headerlink" title="输出选项"></a>输出选项</h3><h4 id="v"><a href="#v" class="headerlink" title="-v"></a><code>-v</code></h4>增加nmap输出的冗余级别，会让nmap输出更多的信息。多个v同时使用会增加输出的冗余级别。<h4 id="d"><a href="#d" class="headerlink" title="-d"></a><code>-d</code></h4>增加调试级别，会使nmap输出更多的信息。有9个级别，可以了解nmap的工作机制。<h4 id="packet-trace"><a href="#packet-trace" class="headerlink" title="--packet-trace"></a><code>--packet-trace</code></h4>输出nmap接收或发送的数据包。<h4 id="oN"><a href="#oN" class="headerlink" title="-oN"></a><code>-oN</code></h4>普通输出，<h4 id="oX"><a href="#oX" class="headerlink" title="-oX"></a><code>-oX</code></h4>Xml格式输出<h4 id="oG"><a href="#oG" class="headerlink" title="-oG"></a><code>-oG</code></h4>grepable 格式输出。<h4 id="oA"><a href="#oA" class="headerlink" title="-oA"></a><code>-oA</code></h4>全格式输出，所有的格式均会输出一份文件。<h4 id="resume"><a href="#resume" class="headerlink" title="--resume"></a><code>--resume</code></h4>利用通过<code>-oN</code>或<code>-oG</code>输出的文件恢复扫描。除<code>--resume</code>之外，无需指定其它任何选项。<h4 id="append-output"><a href="#append-output" class="headerlink" title="--append-output"></a><code>--append-output</code></h4>将nmap的输出追加至<code>-oN</code>或<code>-G</code>指定的文件当中。<h4 id="open-1"><a href="#open-1" class="headerlink" title="--open"></a><code>--open</code></h4>只显示具有开放端口(可能是开放端口的主机:open,open|filtered,unfiltered)的主机，并显示主机开放的端口。<br>例子：<br><code>-oG logs/pb-port80scan-%D.gnmap</code> : %D选项表明输出的日期。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -T4 -Pn -p80 --max-rtt-timeout 200ms --initial-rtt-timeout 150ms --min-hostgroup 512 -oG logs/pb-port80scan2-%D.gnmap 216.163.128.0/20</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>通过指定<code>--initital-rtt-timeout</code>和<code>--min-hostgroup</code>选项缩短了扫描时间。rtt-time是设置一个数据包的来回时间，系统通过RTTtime来判断数据的重发时间。</p>
+<h3 id="Nmap端口扫描算法相关"><a href="#Nmap端口扫描算法相关" class="headerlink" title="Nmap端口扫描算法相关"></a>Nmap端口扫描算法相关</h3><p>Nmap在扫描时会在内存中记录发出的每个探测帧，然后再通过与该探测帧对应的响应帧获取网络环境信息，从而实时调整Nmap的发包策略。如Nmap会记录每个数据包的RTT time，然后计算除srtt，然后计算每次srtt的偏差，如果偏差较小，这就说明网络状况比较稳定，Nmap会等待数据帧srtt的时间。反之,如果偏差较大，这就说明网络状况较差，此时Nmap等待的时间就会变长。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>在所有的扫描方法种，只有<code>-sS</code>该种扫描方式最为快速，隐蔽,可靠。其它扫描方法都或多或少存在一些问题，且输出的状态不是特别清楚，之后再某些有限的条件下， 配合<code>sS</code>进行使用。再使用其他扫描方式时，需要考虑该扫描方式的不可靠性。适当的为Nmap添加一些参数能够缩短Nmap的扫描时间。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/网络安全工具/" rel="tag"># 网络安全工具</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/02/应急响应反思/" rel="next" title="应急响应反思">
+                <i class="fa fa-chevron-left"></i> 应急响应反思
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">红猪</p>
+              <p class="site-description motion-element" itemprop="description">我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/0x4472" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:0x4472@protonmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#端口状态"><span class="nav-number">1.</span> <span class="nav-text">端口状态</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#open"><span class="nav-number">1.1.</span> <span class="nav-text">open</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#closed"><span class="nav-number">1.2.</span> <span class="nav-text">closed</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#filtered"><span class="nav-number">1.3.</span> <span class="nav-text">filtered</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#unfiltered"><span class="nav-number">1.4.</span> <span class="nav-text">unfiltered</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#open-filtered"><span class="nav-number">1.5.</span> <span class="nav-text">open|filtered</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#closed-filtered"><span class="nav-number">1.6.</span> <span class="nav-text">closed|filtered</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扫描方法"><span class="nav-number">2.</span> <span class="nav-text">扫描方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SYN-Scan"><span class="nav-number">2.1.</span> <span class="nav-text">SYN Scan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP-Scan"><span class="nav-number">2.2.</span> <span class="nav-text">TCP Scan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UDP-Scan"><span class="nav-number">2.3.</span> <span class="nav-text">UDP Scan</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#优化UDP的扫描速度"><span class="nav-number">2.3.1.</span> <span class="nav-text">优化UDP的扫描速度</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP-FIN-NULL-and-Xmas-Scan"><span class="nav-number">2.4.</span> <span class="nav-text">TCP FIN,NULL and Xmas Scan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Ack-Scan"><span class="nav-number">2.5.</span> <span class="nav-text">Ack Scan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Windows-Scan"><span class="nav-number">2.6.</span> <span class="nav-text">Windows Scan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Maimon-Scan"><span class="nav-number">2.7.</span> <span class="nav-text">Maimon Scan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Idle-Scan"><span class="nav-number">2.8.</span> <span class="nav-text">Idle Scan</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#选择僵尸主机"><span class="nav-number">2.8.1.</span> <span class="nav-text">选择僵尸主机</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IP-Protocol-Scan"><span class="nav-number">2.9.</span> <span class="nav-text">IP Protocol Scan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FTP-Bounce-Scan"><span class="nav-number">2.10.</span> <span class="nav-text">FTP Bounce Scan</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时间消耗相关的参数"><span class="nav-number">3.</span> <span class="nav-text">时间消耗相关的参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#T0到-T5"><span class="nav-number">3.1.</span> <span class="nav-text">-T0到-T5</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#min-rtt-timeout-max-rtt-timeout-initial-rtt-timeout"><span class="nav-number">3.2.</span> <span class="nav-text">--min-rtt-timeout --max-rtt-timeout --initial-rtt-timeout</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#host-timeout"><span class="nav-number">3.3.</span> <span class="nav-text">--host-timeout</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#min-rate-max-rate"><span class="nav-number">3.4.</span> <span class="nav-text">--min-rate --max-rate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#max-retries"><span class="nav-number">3.5.</span> <span class="nav-text">--max-retries</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#min-hostgroup-max-hostgroup"><span class="nav-number">3.6.</span> <span class="nav-text">--min-hostgroup --max-hostgroup</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#min-parallelism-max-parallelism"><span class="nav-number">3.7.</span> <span class="nav-text">--min-parallelism --max-parallelism</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#scan-delay-max-scan-delay"><span class="nav-number">3.8.</span> <span class="nav-text">--scan-delay --max-scan-delay</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提高Nmap扫描速度的技巧"><span class="nav-number">4.</span> <span class="nav-text">提高Nmap扫描速度的技巧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输出选项"><span class="nav-number">5.</span> <span class="nav-text">输出选项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#v"><span class="nav-number">5.1.</span> <span class="nav-text">-v</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#d"><span class="nav-number">5.2.</span> <span class="nav-text">-d</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#packet-trace"><span class="nav-number">5.3.</span> <span class="nav-text">--packet-trace</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#oN"><span class="nav-number">5.4.</span> <span class="nav-text">-oN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#oX"><span class="nav-number">5.5.</span> <span class="nav-text">-oX</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#oG"><span class="nav-number">5.6.</span> <span class="nav-text">-oG</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#oA"><span class="nav-number">5.7.</span> <span class="nav-text">-oA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#resume"><span class="nav-number">5.8.</span> <span class="nav-text">--resume</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#append-output"><span class="nav-number">5.9.</span> <span class="nav-text">--append-output</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#open-1"><span class="nav-number">5.10.</span> <span class="nav-text">--open</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap端口扫描算法相关"><span class="nav-number">6.</span> <span class="nav-text">Nmap端口扫描算法相关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">红猪</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
