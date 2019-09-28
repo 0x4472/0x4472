@@ -108,18 +108,18 @@
 
 
 
-  <meta name="description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。">
+  <meta name="description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具-ysoserial的机会来验证下自己的思路。">
 <meta name="keywords" content="Java反序列化">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java反序列化学习-CommonsCollections1">
 <meta property="og:url" content="http://yoursite.com/2019/09/29/Java反序列化学习-CommonsCollections1/index.html">
 <meta property="og:site_name" content="红猪的笔记">
-<meta property="og:description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。">
+<meta property="og:description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具-ysoserial的机会来验证下自己的思路。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-28T16:23:03.230Z">
+<meta property="og:updated_time" content="2019-09-28T16:26:36.316Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java反序列化学习-CommonsCollections1">
-<meta name="twitter:description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。">
+<meta name="twitter:description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具-ysoserial的机会来验证下自己的思路。">
 
 
 
@@ -351,7 +351,7 @@
                 
               
 
-              <time title="创建时间：2019-09-29 00:05:40 / 修改时间：00:23:03" itemprop="dateCreated datePublished" datetime="2019-09-29T00:05:40+08:00">2019-09-29</time>
+              <time title="创建时间：2019-09-29 00:05:40 / 修改时间：00:26:36" itemprop="dateCreated datePublished" datetime="2019-09-29T00:05:40+08:00">2019-09-29</time>
             
 
             
@@ -407,7 +407,7 @@
       
 
       
-        <p>前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。</p>
+        <p>前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具-ysoserial的机会来验证下自己的思路。</p>
 <a id="more"></a>
 <h3 id="Java反序列化利用"><a href="#Java反序列化利用" class="headerlink" title="Java反序列化利用"></a>Java反序列化利用</h3><p>要想掌握Java反序列化漏洞payload的构造，那就要知道在构造Java反序列化的payload的构造过程中有三个比较特别重要的步骤，在这里简称为两点一链：</p>
 <h4 id="输入数据执行点"><a href="#输入数据执行点" class="headerlink" title="输入数据执行点"></a>输入数据执行点</h4><p>输入数据执行点是指能够将攻击者控制的数据作为java代码执行的位置。</p>
